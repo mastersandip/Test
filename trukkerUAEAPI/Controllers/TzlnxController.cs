@@ -35,5 +35,10 @@ namespace trukkerUAE.Controllers
         public void Delete(int id)
         {
         }
+
+        public void Test_func()
+        { 
+            //Test
+        }
     }
 }
