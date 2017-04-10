@@ -26,9 +26,6 @@ namespace trukkerUAE.Controllers
 
         PostOrderController objcntrlpostorder = new PostOrderController();
 
-        #region Sandip test
-        
-        #endregion
 
         #region Addon Services
 
