@@ -334,10 +334,11 @@ namespace trukkerUAE.Models
         public string Hiretruck_To_datetime { get; set; }
         public string Hiretruck_IncludingFuel { get; set; }
 
-        // add for additional services 		
+        // add for additional services 
         public string IncludeAddonService { get; set; }
         public string AddonServices { get; set; }
         public string AddonServicesrate { get; set; }
+
         public string AddSerBaseDiscount { get; set; }
         public string TotalPaintingCharge { get; set; }
         public string TotalPaintingDiscount { get; set; }
@@ -861,8 +862,6 @@ namespace trukkerUAE.Models
 
         public string username { get; set; }
         public string order_type { get; set; }
-        public string PageTo { get; set; }
-        public string PageFrom { get; set; }
 
         public string Assigndriver { get; set; }
         public string OrderBy { get; set; }
@@ -1415,6 +1414,7 @@ namespace trukkerUAE.Models
         public string GeneratedPdfLink { get; set; }
 
     }
+
 
     public class order_AddonService_details
     {

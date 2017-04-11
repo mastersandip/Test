@@ -411,7 +411,7 @@ namespace trukkerUAE.Controllers
                             }
                             try
                             {
-                                new EMail().SendOtpToUserMobileNoUAE("Verification Code is : " + Otp.ToString(), ds_user.user_mst.Rows[0]["user_id"].ToString());
+                                new EMail().SendOtpToUserMobileNoUAE("Your Verification Code is: " + Otp.ToString(), ds_user.user_mst.Rows[0]["user_id"].ToString());
                             }
                             catch (Exception ex)
                             {
@@ -434,7 +434,7 @@ namespace trukkerUAE.Controllers
                     DBCommand.Transaction.Commit();
                     if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
                     objBLobj.ExecutionStatus = 1;
-                    return BLGeneralUtil.return_ajax_string("1", "Verification Code Send Your Register Number Successfully ");
+                    return BLGeneralUtil.return_ajax_string("1", "Verification Code Sent to your register number successfully ");
 
                 }
                 catch (Exception ex)
@@ -708,7 +708,7 @@ namespace trukkerUAE.Controllers
                     DBCommand.Transaction.Commit();
                     if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
                     objBLobj.ExecutionStatus = 1;
-                    return BLGeneralUtil.return_ajax_string("1", "Verification Code Sent Your Register Number Successfully ");
+                    return BLGeneralUtil.return_ajax_string("1", "Verification Code Sent to your register number successfully ");
 
                 }
                 catch (Exception ex)

@@ -23,11 +23,9 @@ namespace trukkerUAE.Controllers
 {
     public class AdminController : ServerBase
     {
+        PostOrderController ObjPostOrder = new PostOrderController();
 
-        PostOrderController objcntrlpostorder = new PostOrderController();
-
-
-        #region Addon Services
+        #region Addon Services Local
 
 
         [HttpGet]
@@ -55,6 +53,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Data found");
         }
+
         [HttpGet]
         public string GetAllAgency()
         {
@@ -76,6 +75,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Data found");
         }
+
         [HttpGet]
         public string GetSubServicesById(string serviceID)
         {
@@ -97,6 +97,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Details found");
         }
+
         [HttpGet]
         public string GetUserDetailsByLoadInqNo(string inqno)
         {
@@ -118,6 +119,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Details found");
         }
+
         [HttpGet]
         public string GetAllOrderAddonServiceDetails()
         {
@@ -127,7 +129,7 @@ namespace trukkerUAE.Controllers
                              left join Services_mst on Services_mst.ServiceTypeCode=order_AddonService_details.ServiceTypeCode
                              left join SizeTypeMst on SizeTypeMst.SizeTypeCode=order_AddonService_details.SizeTypeCode   
                              left join Agency_mst on Agency_mst.agency_id=order_AddonService_details.AgencyId
-                             where order_AddonService_details.active_flag='Y'
+                             --where order_AddonService_details.active_flag='Y'
                              order by order_AddonService_details.created_date desc ";
 
             DBDataAdpterObject.SelectCommand.Parameters.Clear();
@@ -145,6 +147,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Data found");
         }
+
         [HttpGet]
         public string GetOrderAddonDetailsByTrnID(string transactionid)
         {
@@ -180,6 +183,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Details found");
         }
+
         [HttpGet]
         public string GetOrderAddonDetailsByInqID(string inqId)
         {
@@ -215,6 +219,8 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Details found");
         }
+
+
         public DataTable SelectOrderAddonDetailsByTrnID(String trnsactionid)
         {
             DataTable dtPostLoadOrders = new DataTable();
@@ -248,6 +254,7 @@ namespace trukkerUAE.Controllers
             else
                 return null;
         }
+
         public DataTable SelectAddonPaymentDetailsByTrnId(String trnsactionid)
         {
             DataTable dtPostLoadOrders = new DataTable();
@@ -270,6 +277,7 @@ namespace trukkerUAE.Controllers
             else
                 return null;
         }
+
         public DataTable SelectOrderAddonDetailsByInqID(string loadinqno, string transactionid)
         {
             DataTable dt = new DataTable();
@@ -331,7 +339,6 @@ namespace trukkerUAE.Controllers
                         if (dtorderPrv != null)
                         {
                             decimal CurrentServCharge = dtserDetails.Rows[0]["ServiceCharge"].ToString() != "" ? Convert.ToDecimal(dtserDetails.Rows[0]["ServiceCharge"].ToString()) : 0;
-                            decimal CurrentServrRem_amt = dtserDetails.Rows[0]["rem_amt_to_receive"].ToString() != "" ? Convert.ToDecimal(dtserDetails.Rows[0]["rem_amt_to_receive"].ToString()) : 0;
                             decimal CurrentServDisc = dtserDetails.Rows[0]["ServiceDiscount"].ToString() != "" ? Convert.ToDecimal(dtserDetails.Rows[0]["ServiceDiscount"].ToString()) : 0;
 
 
@@ -349,7 +356,7 @@ namespace trukkerUAE.Controllers
                             if (rem_amt_to_receive == 0)
                                 dsord.orders[0].rem_amt_to_receive = rem_amt_to_receive;
                             else
-                                dsord.orders[0].rem_amt_to_receive = rem_amt_to_receive - CurrentServrRem_amt;
+                                dsord.orders[0].rem_amt_to_receive = rem_amt_to_receive - CurrentServCharge;
 
                             dsord.orders[0].Total_cost_without_discount = Total_cost_without_discount - CurrentServCharge;
                             dsord.orders[0].TotalAddServiceCharge = TotalAddServiceCharge - CurrentServCharge;
@@ -847,13 +854,13 @@ namespace trukkerUAE.Controllers
         #region Admin Pannel Services
 
         [HttpPost]
-        public string GetOrdersDetailsForDeshboardold([FromBody]JObject Jobj)
+        public string GetOrdersDetailsForDeshboard([FromBody]JObject Jobj)
         {
 
             List<orders> objOrder = new List<orders>();
             string status = ""; string fromdate = ""; string Todate = ""; string sourcecity = "";
             string destinationcity = ""; string owner_id = ""; string username = ""; string order_type_flag = "";
-            string RowsPerPage = ""; string PageNo = ""; string Assigndriver = ""; string OrderBy = ""; string SortBy = "";
+            string RecordNo = ""; string PageNo = ""; string Assigndriver = ""; string OrderBy = ""; string SortBy = "";
             objOrder = Jobj["order_deshboard"].ToObject<List<orders>>();
             if (Jobj["order_deshboard"] != null)
             {
@@ -870,8 +877,8 @@ namespace trukkerUAE.Controllers
                 SortBy = objOrder[0].SortBy;
             }
 
-            //int PageFrom = (Convert.ToInt16(RowsPerPage) * (Convert.ToInt16(PageNo) - 1)) + 1;
-            //int PageTo = Convert.ToInt16(RowsPerPage) * Convert.ToInt16(PageNo);
+            //int PageFrom = (Convert.ToInt16(RecordNo) * (Convert.ToInt16(PageNo) - 1)) + 1;
+            //int PageTo = Convert.ToInt16(RecordNo) * Convert.ToInt16(PageNo);
 
 
             try
@@ -879,78 +886,78 @@ namespace trukkerUAE.Controllers
                 DataTable dtPostLoadOrders = new DataTable();
                 StringBuilder SQLSelect = new StringBuilder();
 
-                SQLSelect.Append(@"  select statusFinal as status,* from ( select ROW_NUMBER() OVER(ORDER BY load_inquiry_no) AS SrNo,* from ( 
-                    select  res_inner.Total_PT_charge,res_inner.Total_PT_Discount,res_inner.PT_SizeTypeCode,res_inner.Total_CL_Charge,res_inner.Total_CL_Discount,
-                    res_inner.CL_SizeTypeCode,res_inner.Total_PEST_Charge,res_inner.Total_PEST_Discount,res_inner.PEST_SizeTypeCode,(
-                    select top 1 mover_Name from order_driver_truck_details join mover_mst on mover_mst.mover_id=order_driver_truck_details.mover_id where load_inquiry_no=lstorder.load_inquiry_no) as mover_name,driver_mst.mobile_no,driver_mst.driver_photo,driver_mst.Name as drivername,quote_hdr.GeneratedPdfLink as cbm_GeneratedPdfLink,truckdetails.*,quote_hdr.total_cbm,quote_hdr.StatusFlag,status1 as statusFinal,
-                    feedback_mst.star_rating as feedback_rating,feedback_mst.feedback as feedback_msg,(SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =lstorder.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,lstorder.* 
-                    from 
-                    (
-                    select distinct CASE WHEN order_cancellation_details.cancellation_id IS not NULL THEN '25'
-                                    --WHEN order_reschedule_req_details.RescheduleReq_id IS not NULL and order_reschedule_req_details.active_flag='N' THEN '26' 
-                                    else result.status
-                    END AS status1,order_driver_truck_details_summary.NoOfAssignedDriver, order_driver_truck_details_summary.NoOfAssignedTruck, order_driver_truck_details_summary.NoOfAssignedHandiman, order_driver_truck_details_summary.NoOfAssignedLabour,  result.*,
-                    (SELECT   top(1)  truck_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_truck_id,(SELECT   top(1)  driver_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_id
-                        from 
-                        ( 
-                        		select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id1' OrderKey  
-                        		from orders    
-                        		JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-                        		join user_mst on user_mst.unique_id =  orders.shipper_id
-                        		join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
-                        		Where 1=1 and orders.active_flag  = 'Y' 
-                        		and orders.shippingdatetime>getdate()  
-                        		UNION ALL 
-                        		select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id2' OrderKey from orders  
-                        		JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
-                        		join user_mst on user_mst.unique_id =  orders.shipper_id
-                        		join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
-                        		Where 1=1 and orders.active_flag  = 'Y'
-                        		and orders.shippingdatetime<getdate() 
-                        ) result 	  
-                        LEFT OUTER JOIN 	
-                        ( 
-                        	select 	load_inquiry_no,COUNT(*) as NoOfAssignedDriver, COUNT(*) as NoOfAssignedTruck, SUM(CAST(NoOfHandiman AS int)) as NoOfAssignedHandiman, SUM(CAST(NoOfLabour AS int)) as NoOfAssignedLabour
-                        	from  order_driver_truck_details 
-                        	group by load_inquiry_no
-                        ) as order_driver_truck_details_summary	  
-                        ON result.load_inquiry_no = order_driver_truck_details_summary.load_inquiry_no
-                        LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no 
-                        --  LEFT OUTER JOIN order_reschedule_req_details ON result.load_inquiry_no = order_reschedule_req_details.load_inquiry_no 
-                    ) as lstorder  
-                    left join 
-                    (
-                        SELECT distinct truck_mst.truck_id,truck_mst.body_type,truck_mst.truck_model,truck_mst.truck_make_id
-                        ,truck_make_mst.make_name,truck_model_mst.model_desc,truck_body_mst.truck_body_desc, 
-                        truck_rto_registration_detail.vehicle_reg_no,truck_rto_registration_detail.reg_doc_copy,truck_rto_registration_detail.vehicle_regno_copy, 
-                        truck_permit_details.permit_type,truck_permit_details.permit_no,truck_permit_details.valid_from,truck_permit_details.valid_upto,truck_permit_details.permit_photo 
-                        from truck_mst 
-                        left join truck_make_mst on truck_mst.truck_make_id = truck_make_mst.make_id 
-                        left join truck_model_mst on truck_mst.truck_model = truck_model_mst.model_id 
-                        left join truck_rto_registration_detail on truck_mst.truck_id = truck_rto_registration_detail.truck_id 
-                        left join truck_permit_details on truck_mst.truck_id = truck_permit_details.truck_id 
-                        left join truck_body_mst on truck_mst.body_type = truck_body_mst.truck_body_id
-                    ) as truckdetails on lstorder.driver_truck_id=truckdetails.truck_id
-                    left join driver_mst on lstorder.driver_id = driver_mst.driver_id 
-                    left join feedback_mst on lstorder.load_inquiry_no =  Feedback_mst.load_inquiry_no
-                    LEFT OUTER JOIN quote_hdr ON lstorder.load_inquiry_no = quote_hdr.quote_id 
-                    left join(
-        	            select * from(
-                            select load_inquiry_no,('Total_'+ServiceTypeCode+'_Charge')as ServiceTypeCode,Cast(ServiceCharge AS Varchar(50)) as ServiceCharge 
-                            from order_AddonService_details
-                        union
-                            select load_inquiry_no,('Total_'+ServiceTypeCode+'_Discount')as ServiceTypeCode,Cast(ServiceDiscount  AS Varchar(50)) as ServiceCharge 
-                            from order_AddonService_details
-                        union
-                            select load_inquiry_no,(ServiceTypeCode+'_SizeTypeCode')as ServiceTypeCode,SizeTypeMst.SizeTypeDesc 
-                            from order_AddonService_details join SizeTypeMst on SizeTypeMst.SizeTypeCode=order_AddonService_details.SizeTypeCode
-                        )res
-                        PIVOT(
-                            MAX(ServiceCharge) For ServiceTypeCode in (Total_PT_Charge,Total_PT_Discount,PT_SizeTypeCode,Total_CL_Charge,Total_CL_Discount,CL_SizeTypeCode,Total_PEST_Charge,Total_PEST_Discount,PEST_SizeTypeCode)
-                        )pivot2
-                    )res_inner on res_inner.load_inquiry_no = lstorder.load_inquiry_no
-                    ) as tblfinal
-                    ) as SOD  where  1=1 ");
+                SQLSelect.Append(@"select statusFinal as status,* from ( 
+                                    select  res_inner.Total_PT_charge,res_inner.Total_PT_Discount,res_inner.PT_SizeTypeCode,res_inner.Total_CL_Charge,res_inner.Total_CL_Discount,
+                                    res_inner.CL_SizeTypeCode,res_inner.Total_PEST_Charge,res_inner.Total_PEST_Discount,res_inner.PEST_SizeTypeCode,(
+                                    select top 1 mover_Name from order_driver_truck_details join mover_mst on mover_mst.mover_id=order_driver_truck_details.mover_id where load_inquiry_no=lstorder.load_inquiry_no) as mover_name,driver_mst.mobile_no,driver_mst.driver_photo,driver_mst.Name as drivername,quote_hdr.GeneratedPdfLink as cbm_GeneratedPdfLink,truckdetails.*,quote_hdr.total_cbm,quote_hdr.StatusFlag,status1 as statusFinal,
+                                    feedback_mst.star_rating as feedback_rating,feedback_mst.feedback as feedback_msg,(SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =lstorder.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,lstorder.* 
+                                    from 
+                                    (
+                                    select distinct CASE WHEN order_cancellation_details.cancellation_id IS not NULL THEN '25'
+                                                    --WHEN order_reschedule_req_details.RescheduleReq_id IS not NULL and order_reschedule_req_details.active_flag='N' THEN '26' 
+                                                    else result.status
+                                    END AS status1,order_driver_truck_details_summary.NoOfAssignedDriver, order_driver_truck_details_summary.NoOfAssignedTruck, order_driver_truck_details_summary.NoOfAssignedHandiman, order_driver_truck_details_summary.NoOfAssignedLabour,  result.*,
+                                    (SELECT   top(1)  truck_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_truck_id,(SELECT   top(1)  driver_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_id
+                	                    from 
+                	                    ( 
+                			                    select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id1' OrderKey  
+                			                    from orders    
+                			                    JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+                			                    join user_mst on user_mst.unique_id =  orders.shipper_id
+                			                    join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
+                			                    Where 1=1 and orders.active_flag  = 'Y' 
+                			                    and orders.shippingdatetime>getdate()  
+                			                    UNION ALL 
+                			                    select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id2' OrderKey from orders  
+                			                    JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
+                			                    join user_mst on user_mst.unique_id =  orders.shipper_id
+                			                    join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
+                			                    Where 1=1 and orders.active_flag  = 'Y'
+                			                    and orders.shippingdatetime<getdate() 
+                	                    ) result 	  
+                	                    LEFT OUTER JOIN 	
+                	                    ( 
+                		                    select 	load_inquiry_no,COUNT(*) as NoOfAssignedDriver, COUNT(*) as NoOfAssignedTruck, SUM(CAST(NoOfHandiman AS int)) as NoOfAssignedHandiman, SUM(CAST(NoOfLabour AS int)) as NoOfAssignedLabour
+                		                    from  order_driver_truck_details 
+                		                    group by load_inquiry_no
+                	                    ) as order_driver_truck_details_summary	  
+                	                    ON result.load_inquiry_no = order_driver_truck_details_summary.load_inquiry_no
+                	                    LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no 
+                	                    --  LEFT OUTER JOIN order_reschedule_req_details ON result.load_inquiry_no = order_reschedule_req_details.load_inquiry_no 
+                                    ) as lstorder  
+                                    left join 
+                                    (
+                	                    SELECT distinct truck_mst.truck_id,truck_mst.body_type,truck_mst.truck_model,truck_mst.truck_make_id
+                	                    ,truck_make_mst.make_name,truck_model_mst.model_desc,truck_body_mst.truck_body_desc, 
+                	                    truck_rto_registration_detail.vehicle_reg_no,truck_rto_registration_detail.reg_doc_copy,truck_rto_registration_detail.vehicle_regno_copy, 
+                	                    truck_permit_details.permit_type,truck_permit_details.permit_no,truck_permit_details.valid_from,truck_permit_details.valid_upto,truck_permit_details.permit_photo 
+                	                    from truck_mst 
+                	                    left join truck_make_mst on truck_mst.truck_make_id = truck_make_mst.make_id 
+                	                    left join truck_model_mst on truck_mst.truck_model = truck_model_mst.model_id 
+                	                    left join truck_rto_registration_detail on truck_mst.truck_id = truck_rto_registration_detail.truck_id 
+                	                    left join truck_permit_details on truck_mst.truck_id = truck_permit_details.truck_id 
+                	                    left join truck_body_mst on truck_mst.body_type = truck_body_mst.truck_body_id
+                                    ) as truckdetails on lstorder.driver_truck_id=truckdetails.truck_id
+                                    left join driver_mst on lstorder.driver_id = driver_mst.driver_id 
+                                    left join feedback_mst on lstorder.load_inquiry_no =  Feedback_mst.load_inquiry_no
+                                    LEFT OUTER JOIN quote_hdr ON lstorder.load_inquiry_no = quote_hdr.quote_id 
+                                        left join(
+	                                                select * from(
+                                                        select load_inquiry_no,('Total_'+ServiceTypeCode+'_Charge')as ServiceTypeCode,Cast(ServiceCharge AS Varchar(50)) as ServiceCharge 
+                                                        from order_AddonService_details
+                                                    union
+                                                        select load_inquiry_no,('Total_'+ServiceTypeCode+'_Discount')as ServiceTypeCode,Cast(ServiceDiscount  AS Varchar(50)) as ServiceCharge 
+                                                        from order_AddonService_details
+                                                    union
+                                                        select load_inquiry_no,(ServiceTypeCode+'_SizeTypeCode')as ServiceTypeCode,SizeTypeMst.SizeTypeDesc 
+                                                        from order_AddonService_details join SizeTypeMst on SizeTypeMst.SizeTypeCode=order_AddonService_details.SizeTypeCode
+                                                    )res
+                                                    PIVOT(
+                                                        MAX(ServiceCharge) For ServiceTypeCode in (Total_PT_Charge,Total_PT_Discount,PT_SizeTypeCode,Total_CL_Charge,Total_CL_Discount,CL_SizeTypeCode,Total_PEST_Charge,Total_PEST_Discount,PEST_SizeTypeCode)
+                                                    )pivot2
+                                                )res_inner on res_inner.load_inquiry_no = lstorder.load_inquiry_no
+                                    ) as tblfinal
+                                    where  1=1");
 
 
                 if (status != "")
@@ -1050,7 +1057,7 @@ namespace trukkerUAE.Controllers
                 if (dtPostLoadOrders != null && dtPostLoadOrders.Rows.Count > 0)
                     return BLGeneralUtil.return_ajax_data("1", SendReceiveJSon.GetJson(dtPostLoadOrders));
                 else
-                    return BLGeneralUtil.return_ajax_string("0", " Order Details Not found "); ;
+                    return BLGeneralUtil.return_ajax_string("0", "You have no orders yet "); ;
             }
             catch (Exception ex)
             {
@@ -1097,7 +1104,7 @@ namespace trukkerUAE.Controllers
                     dsdrv = master.CreateDataSet(tord);
                 }
                 // get order details by load inquiry number from order table
-                DataTable dt_order =objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
+                DataTable dt_order = ObjPostOrder.GetLoadInquiryById(tord[0].load_inquiry_no);
                 if (dt_order == null)
                     return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
 
@@ -1120,7 +1127,7 @@ namespace trukkerUAE.Controllers
 
 
                 // get order details by load inquiry number from post_load_inquiry table
-                DataTable dt_loadinq = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
+                DataTable dt_loadinq = ObjPostOrder.GetLoadInquiryById(tord[0].load_inquiry_no);
                 if (dt_loadinq == null)
                     return BLGeneralUtil.return_ajax_string("0", " Load Inquiry details Not found");
 
@@ -1141,7 +1148,7 @@ namespace trukkerUAE.Controllers
                 loadinqid = tord[0].load_inquiry_no.ToString();
                 driverController objDriver = new driverController();
 
-                DataTable dt_quote = objcntrlpostorder.GetLoadInquiryQuotationById(loadinqid, ownid);
+                DataTable dt_quote = ObjPostOrder.GetLoadInquiryQuotationById(loadinqid, ownid);
                 DataTable dt_truck_currentPO = objDriver.GetTruckCurrentPositionById(loadinqid);
 
                 DBConnection.Open();
@@ -1485,52 +1492,6 @@ namespace trukkerUAE.Controllers
 
                 #endregion
 
-                #region Delete Addon details
-                if (tord[0].IsCancel == "Y")
-                {
-                    if (tord[0].AddOnTransactionIds.Trim() != "")
-                    {
-                        String[] strAddonTrnIds = tord[0].AddOnTransactionIds.Trim().Split(',');
-                        if (strAddonTrnIds.Length > 0)
-                        {
-                            for (int i = 0; i < strAddonTrnIds.Length; i++)
-                            {
-                                DataTable dtaddondetails = new AdminController().SelectOrderAddonDetailsByTrnID(strAddonTrnIds[i]);
-                                dtaddondetails = BLGeneralUtil.CheckDateTime(dtaddondetails);
-                                try
-                                {
-                                    dsord.EnforceConstraints = false;
-                                    dsord.order_AddonService_details.ImportRow(dtaddondetails.Rows[0]);
-                                    dsord.order_AddonService_details.AcceptChanges();
-                                    dsord.order_AddonService_details[0].Delete();
-
-                                    dsord.EnforceConstraints = true;
-
-                                    objBLobj = master.UpdateTables(dsord.order_AddonService_details, ref DBCommand);
-                                    if (objBLobj.ExecutionStatus == 2)
-                                    {
-                                        ServerLog.Log(objBLobj.ServerMessage.ToString());
-                                        if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                        if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                        objBLobj.ExecutionStatus = 2;
-                                        return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    ServerLog.Log(ex.Message + Environment.NewLine + ex.StackTrace);
-                                    if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                    if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                    return BLGeneralUtil.return_ajax_string("0", ex.Message);
-                                }
-                            }
-
-                        }
-                    }
-                }
-
-                #endregion
-
                 DBCommand.Transaction.Commit();
                 if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
                 objBLobj.ExecutionStatus = 1;
@@ -1590,7 +1551,7 @@ namespace trukkerUAE.Controllers
                     dsdrv = master.CreateDataSet(tord);
                 }
                 // get order details by load inquiry number from order table
-                DataTable dt_order = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
+                DataTable dt_order = ObjPostOrder.GetLoadInquiryById(tord[0].load_inquiry_no);
                 if (dt_order == null)
                     return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
 
@@ -1613,7 +1574,7 @@ namespace trukkerUAE.Controllers
 
 
                 // get order details by load inquiry number from post_load_inquiry table
-                DataTable dt_loadinq = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
+                DataTable dt_loadinq = ObjPostOrder.GetLoadInquiryById(tord[0].load_inquiry_no);
                 if (dt_loadinq == null)
                     return BLGeneralUtil.return_ajax_string("0", " Load Inquiry details Not found");
 
@@ -1627,7 +1588,7 @@ namespace trukkerUAE.Controllers
                 loadinqid = tord[0].load_inquiry_no.ToString();
                 driverController objDriver = new driverController();
 
-                DataTable dt_quote = objcntrlpostorder.GetLoadInquiryQuotationById(loadinqid, ownid);
+                DataTable dt_quote = ObjPostOrder.GetLoadInquiryQuotationById(loadinqid, ownid);
                 DataTable dt_truck_currentPO = objDriver.GetTruckCurrentPositionById(loadinqid);
 
                 DBConnection.Open();
@@ -1937,451 +1898,6 @@ namespace trukkerUAE.Controllers
         }
 
         [HttpPost]
-        public string CompleteOrderByadminold([FromBody]JObject ord)
-        {
-            #region Validation
-
-            if (ord["complete_orders"][0]["load_inquiry_no"] == null || ord["complete_orders"][0]["load_inquiry_no"].ToString() == "")
-            {
-                return BLGeneralUtil.return_ajax_string("0", "Please Provide Inquiry ID");
-            }
-
-
-            #endregion
-
-            string loadinqid = ""; //string trukid = "";
-            DataTable dt_notification = new DataTable();
-            Master master = new Master(); string ownid = "";
-            DataSet dsdrv = new DataSet();
-
-            try
-            {
-
-                BLReturnObject objBLobj = new BLReturnObject();
-                //DS_driver_order_notifications ds_notification = new DS_driver_order_notifications();
-                DS_driver_order_notifications ds_driver = new DS_driver_order_notifications();
-                DS_orders dsord = new DS_orders();
-                Document objdoc = new Document(); String DocNtficID = ""; string message = "";
-                int extrahrs = 0;
-                List<orders> tord = new List<orders>();
-                DataTable dt_DriverTruckdetails = new DataTable();
-                if (ord["complete_orders"] != null)
-                {
-                    tord = ord["complete_orders"].ToObject<List<orders>>();
-                    dsdrv = master.CreateDataSet(tord);
-                }
-                // get order details by load inquiry number from order table
-                DataTable dt_order = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
-                if (dt_order == null)
-                    return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
-
-                if (dt_order != null)
-                {
-                    string isassigndriver_truck = dt_order.Rows[0]["isassign_driver_truck"].ToString();
-                    if (isassigndriver_truck == "N")
-                    {
-                    }
-                    else
-                    {
-                        // get order details by load inquiry number from order table
-                        dt_DriverTruckdetails = new driverController().GetDriverTruckDetailsByinquiryId(tord[0].load_inquiry_no);
-                        if (dt_DriverTruckdetails == null)
-                            return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
-                    }
-                }
-
-
-
-
-                // get order details by load inquiry number from post_load_inquiry table
-                DataTable dt_loadinq = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
-                if (dt_loadinq == null)
-                    return BLGeneralUtil.return_ajax_string("0", " Load Inquiry details Not found");
-
-
-                if (dt_order != null && dt_order.Rows.Count > 0)
-                {
-                    ownid = dt_order.Rows[0]["shipper_id"].ToString();
-                    //  trukid = dt_order.Rows[0]["truck_id"].ToString();
-                }
-
-                //if (dt_loadinq != null && dt_loadinq.Rows.Count > 0)
-                //{
-                //    if (dt_loadinq.Rows[0]["load_unload_extra_hours"] != null && dt_loadinq.Rows[0]["load_unload_extra_hours"].ToString() != "")
-                //        extrahrs = Convert.ToInt16(dt_loadinq.Rows[0]["load_unload_extra_hours"]);
-                //}
-
-
-                loadinqid = tord[0].load_inquiry_no.ToString();
-                driverController objDriver = new driverController();
-
-                DataTable dt_quote = objcntrlpostorder.GetLoadInquiryQuotationById(loadinqid, ownid);
-                DataTable dt_truck_currentPO = objDriver.GetTruckCurrentPositionById(loadinqid);
-
-                DBConnection.Open();
-                if (DBConnection.State == ConnectionState.Closed) DBConnection.Open();
-                DBCommand.Transaction = DBConnection.BeginTransaction();
-                message = "";
-
-
-                if (dt_order != null)
-                {
-                    //string isassigndriver_truck = dt_order.Rows[0]["isassign_driver_truck"].ToString();
-                    //if (isassigndriver_truck == "N")
-                    //{
-                    //}
-                    //else
-                    //{
-                    #region Update Table post_load_inquiry  details for Complete Order
-
-                    DS_Post_load_enquiry ds_postload = new DS_Post_load_enquiry();
-                    if (dt_loadinq != null)
-                    {
-                        ds_postload.EnforceConstraints = false;
-                        ds_postload.post_load_inquiry.ImportRow(dt_loadinq.Rows[0]);
-
-                        if (tord[0].status.Trim() != "")
-                            ds_postload.post_load_inquiry[0].status = tord[0].status;
-
-                        ds_postload.post_load_inquiry[0].modified_by = tord[0].modified_by;
-                        ds_postload.post_load_inquiry[0].modified_date = System.DateTime.UtcNow;
-                        ds_postload.post_load_inquiry[0].modified_host = tord[0].modified_host;
-                        ds_postload.post_load_inquiry[0].modified_device_id = tord[0].modified_device_id;
-                        ds_postload.post_load_inquiry[0].modified_device_type = tord[0].modified_device_type;
-                        ds_postload.EnforceConstraints = true;
-                        objBLobj = master.UpdateTables(ds_postload.post_load_inquiry, ref DBCommand);
-                        if (objBLobj.ExecutionStatus == 2)
-                        {
-                            ServerLog.Log(objBLobj.ServerMessage.ToString());
-                            if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                            if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                            objBLobj.ExecutionStatus = 2;
-                            return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                        }
-                    }
-                    #endregion
-
-                    #region Update Table load_order_enquiry_quotation details for Complete Order
-
-                    if (dt_quote != null && dt_quote.Rows.Count > 0)
-                    {
-                        #region Save Load Order Quote History
-
-                        //objBLobj = SaveHistory(dt_quote, ref DBCommand);
-                        //if (objBLobj.ExecutionStatus != 1)
-                        //{
-                        //    ServerLog.Log(objBLobj.ServerMessage.ToString());
-                        //    if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                        //    if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                        //    return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                        //}
-                        #endregion
-
-                        DS_load_order_quotation ds_quote = new DS_load_order_quotation();
-                        ds_quote.EnforceConstraints = false;
-                        ds_quote.load_order_enquiry_quotation.ImportRow(dt_quote.Rows[0]);
-                        ds_quote.load_order_enquiry_quotation[0].status = tord[0].status;
-                        ds_quote.load_order_enquiry_quotation[0].modified_by = tord[0].created_by;
-                        ds_quote.load_order_enquiry_quotation[0].modified_date = System.DateTime.UtcNow;
-                        ds_quote.load_order_enquiry_quotation[0].modified_host = tord[0].created_host;
-                        ds_quote.load_order_enquiry_quotation[0].modified_device_id = tord[0].modified_device_id;
-                        ds_quote.load_order_enquiry_quotation[0].modified_device_type = tord[0].modified_device_type;
-                        objBLobj = master.UpdateTables(ds_quote.load_order_enquiry_quotation, ref DBCommand);
-                        if (objBLobj.ExecutionStatus == 2)
-                        {
-                            ServerLog.Log(objBLobj.ServerMessage.ToString());
-                            if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                            if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                            objBLobj.ExecutionStatus = 2;
-                            return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                        }
-                    }
-                    #endregion
-
-                    #region Update Data In Orders_driver_truck_details Table
-
-                    DS_driver_order_notifications objds_driver_order_notifiation = new DS_driver_order_notifications();
-
-
-                    if (dt_DriverTruckdetails != null)
-                    {
-                        for (int i = 0; i < dt_DriverTruckdetails.Rows.Count; i++)
-                        {
-                            objds_driver_order_notifiation.order_driver_truck_details.ImportRow(dt_DriverTruckdetails.Rows[i]);
-
-                            if (dt_DriverTruckdetails.Rows[i]["status"].ToString() == Constant.ALLOCATED_BUT_NOT_STARTE)
-                            {
-                                objds_driver_order_notifiation.order_driver_truck_details[0].pickup_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].pickup_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].pickup_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_time = System.DateTime.UtcNow;
-                            }
-
-                            if (dt_DriverTruckdetails.Rows[i]["status"].ToString() == Constant.TRUCK_READY_FOR_PICKUP)
-                            {
-                                objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_time = System.DateTime.UtcNow;
-                            }
-
-                            if (dt_DriverTruckdetails.Rows[i]["status"].ToString() == Constant.lOADING_STARTED)
-                            {
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].start_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_time = System.DateTime.UtcNow;
-                            }
-                            if (dt_DriverTruckdetails.Rows[i]["status"].ToString() == Constant.START)
-                            {
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_time = System.DateTime.UtcNow;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_time = System.DateTime.UtcNow;
-                            }
-
-                            if (dt_DriverTruckdetails.Rows[i]["status"].ToString() == Constant.UNLOADING_COMPLETED)
-                            {
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lat = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_lng = null;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].complete_time = System.DateTime.UtcNow;
-                            }
-
-                            if (tord[0].IsCancel == "Y")
-                            {
-                                objds_driver_order_notifiation.order_driver_truck_details[i].active_flag = Constant.Flag_No;
-                                objds_driver_order_notifiation.order_driver_truck_details[i].status = Constant.UNLOADING_COMPLETED;
-                            }
-                            if (tord[0].status.Trim() != "")
-                            {
-                                if (tord[0].status.Trim() == Constant.ALLOCATED_BUT_NOT_STARTE)
-                                    objds_driver_order_notifiation.order_driver_truck_details[i].pickup_by = "ADMIN";
-                                else if (tord[0].status.Trim() == Constant.lOADING_STARTED)
-                                    objds_driver_order_notifiation.order_driver_truck_details[i].loadingstart_by = "ADMIN";
-                                else if (tord[0].status.Trim() == Constant.START)
-                                    objds_driver_order_notifiation.order_driver_truck_details[i].start_by = "ADMIN";
-                                else if (tord[0].status.Trim() == Constant.UNLOADING_START)
-                                    objds_driver_order_notifiation.order_driver_truck_details[i].unloadingstart_by = "ADMIN";
-                                else if (tord[0].status.Trim() == Constant.UNLOADING_COMPLETED)
-                                    objds_driver_order_notifiation.order_driver_truck_details[i].complete_by = "ADMIN";
-
-                                objds_driver_order_notifiation.order_driver_truck_details[i]["status"] = tord[0].status;
-                            }
-
-                            objds_driver_order_notifiation.order_driver_truck_details[i]["modified_by"] = tord[0].created_by;
-                            objds_driver_order_notifiation.order_driver_truck_details[i]["modified_date"] = System.DateTime.UtcNow;
-                            objds_driver_order_notifiation.order_driver_truck_details[i]["modified_host"] = tord[0].created_host;
-                            objds_driver_order_notifiation.order_driver_truck_details[i]["modified_device_id"] = tord[0].device_id;
-                            objds_driver_order_notifiation.order_driver_truck_details[i]["modified_device_type"] = tord[0].device_type;
-
-                            objBLobj = master.UpdateTables(objds_driver_order_notifiation.order_driver_truck_details, ref DBCommand);
-                            if (objBLobj.ExecutionStatus == 2)
-                            {
-                                ServerLog.Log(objBLobj.ServerMessage.ToString());
-                                if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                objBLobj.ExecutionStatus = 2;
-                                return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
-                    }
-
-                    #endregion
-
-                    #region Save Truck Position to History Table on Order Completion
-
-                    DS_Truck_current_location ds_truck = new DS_Truck_current_location();
-                    ds_truck.EnforceConstraints = false;
-                    if (tord[0].status == Constant.ORDER_COMPLETED)
-                    {
-                        #region Save Truck History
-
-
-                        if (dt_truck_currentPO != null && dt_truck_currentPO.Rows.Count > 0)
-                        {
-                            for (int i = 0; i < dt_truck_currentPO.Rows.Count; i++)
-                            {
-                                ds_truck.truck_current_position_history.ImportRow(dt_truck_currentPO.Rows[i]);
-                                ds_truck.truck_current_position_history[i].AcceptChanges();
-                                ds_truck.truck_current_position_history[i].SetAdded();
-                                ds_truck.truck_current_position.ImportRow(dt_truck_currentPO.Rows[i]);
-                                ds_truck.truck_current_position[i].AcceptChanges();
-                                ds_truck.truck_current_position[i].Delete();
-                            }
-                            if (ds_truck != null && ds_truck.truck_current_position_history != null && ds_truck.truck_current_position_history.Rows.Count > 0)
-                            {
-                                objBLobj = master.UpdateTables(ds_truck.truck_current_position_history, ref DBCommand);
-                                if (objBLobj.ExecutionStatus == 2)
-                                {
-                                    ServerLog.Log(objBLobj.ServerMessage.ToString());
-                                    if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                    if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                    objBLobj.ExecutionStatus = 2;
-                                    return BLGeneralUtil.return_ajax_string("0", "Error while saving position history");
-                                }
-                            }
-
-                            if (ds_truck != null && ds_truck.truck_current_position != null && ds_truck.truck_current_position.Rows.Count > 0)
-                            {
-                                objBLobj = master.UpdateTables(ds_truck.truck_current_position, ref DBCommand);
-                                if (objBLobj.ExecutionStatus == 2)
-                                {
-                                    ServerLog.Log(objBLobj.ServerMessage.ToString());
-                                    if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                    if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                    objBLobj.ExecutionStatus = 2;
-                                    return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                                }
-                            }
-                        }
-                        #endregion
-                    }
-                    #endregion
-
-                }
-
-                #region Update Date In Orders Table
-                string Invoicelink = ConfigurationManager.AppSettings["InvoicePdfLink"].ToString();
-
-                if (dt_order != null)
-                {
-                    dsord.orders.ImportRow(dt_order.Rows[0]);
-
-                    if (tord[0].IsCancel == "Y")
-                    {
-                        dsord.orders[0].active_flag = Constant.FLAG_Y;
-                        dsord.orders[0].IsCancel = Constant.FLAG_Y;
-                    }
-                    if (tord[0].status.Trim() != "")
-                        dsord.orders.Rows[0]["status"] = tord[0].status;
-                    dsord.orders.Rows[0]["Remark"] = tord[0].Remark;
-                    dsord.orders.Rows[0]["modified_by"] = tord[0].created_by;
-                    dsord.orders.Rows[0]["modified_date"] = System.DateTime.UtcNow;
-                    dsord.orders.Rows[0]["modified_host"] = tord[0].created_host;
-                    dsord.orders.Rows[0]["modified_device_id"] = tord[0].device_id;
-                    dsord.orders.Rows[0]["modified_device_type"] = tord[0].device_type;
-                    dsord.orders.Rows[0]["order_completion_date"] = System.DateTime.UtcNow;
-                    if (tord[0].status != null && tord[0].status.Trim() != String.Empty && tord[0].status == Constant.ORDER_COMPLETED)
-                    {
-                        driverController objdriverController = new driverController();
-                        int CreditDays = objdriverController.GetShipperCreditDays(ref DBCommand, dsord.orders[0].shipper_id, ref message);
-                        if (CreditDays < 0)
-                        {
-                            ServerLog.Log(message);
-                            if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                            if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                            return BLGeneralUtil.return_ajax_string("0", message);
-                        }
-                        dsord.orders[0].order_completion_date = DateTime.Today;
-                        DateTime payment_due_date = dsord.orders[0].order_completion_date.AddDays(CreditDays);
-                        dsord.orders[0]["payment_due_date"] = payment_due_date;
-
-                        bool bl = new MailerController().GenerateInvoiceMail(tord[0].load_inquiry_no);
-                        string filepath = Invoicelink + "Invoicedetail_" + tord[0].load_inquiry_no + ".pdf";
-                        dsord.orders.Rows[0]["invoice_pdf_link"] = filepath;
-                    }
-
-                    objBLobj = master.UpdateTables(dsord.orders, ref DBCommand);
-                    if (objBLobj.ExecutionStatus == 2)
-                    {
-                        ServerLog.Log(objBLobj.ServerMessage.ToString());
-                        if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                        if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                        objBLobj.ExecutionStatus = 2;
-                        return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                    }
-                }
-                else
-                {
-                    return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
-                }
-
-                #endregion
-
-                #region update status in driver_mst
-
-                if (dt_DriverTruckdetails != null)
-                {
-                    for (int i = 0; i < dt_DriverTruckdetails.Rows.Count; i++)
-                    {
-                        DS_Owner_Mst ds_owner = new DS_Owner_Mst();
-                        if (dt_DriverTruckdetails != null && dt_DriverTruckdetails.Rows.Count > 0)
-                        {
-                            ds_owner.driver_mst.ImportRow(dt_DriverTruckdetails.Rows[i]);
-                            ds_owner.driver_mst[0].isfree = Constant.Flag_Yes;
-
-                            objBLobj = master.UpdateTables(ds_owner.driver_mst, ref DBCommand);
-                            if (objBLobj.ExecutionStatus != 1)
-                            {
-                                ServerLog.Log(objBLobj.ServerMessage.ToString());
-                                DBCommand.Transaction.Rollback();
-                                if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                            }
-                        }
-                    }
-                }
-
-                #endregion
-
-                DBCommand.Transaction.Commit();
-                if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                objBLobj.ExecutionStatus = 1;
-
-                DateTime dubaitime = objcntrlpostorder.DatetimeUTC_ToDubaiConverter("", DateTime.UtcNow);
-                string strtitle = " Your Order No. " + tord[0].load_inquiry_no + " : Successfully Completed + Your Invoice ";
-
-
-                string Msg = "Thank you..<br>Your order from  " + dt_order.Rows[0]["inquiry_source_addr"].ToString() + " To  " + dt_order.Rows[0]["inquiry_destination_addr"].ToString() + " has been delivered successfully " + dubaitime.ToString("dd-MM-yyyy HH:mm:ss tt") + ".Your reference order number is " + dt_order.Rows[0]["load_inquiry_no"].ToString();
-                string shippername = new PostOrderController().GetUserdetailsByID(dt_order.Rows[0]["shipper_id"].ToString());
-                var result = JsonConvert.DeserializeObject<Dictionary<string, string>>(new EMail().GenerateOrderCompletationMail(new PostOrderController().GetEmailByID(dt_order.Rows[0]["shipper_id"].ToString()), strtitle, shippername, Msg, tord[0].load_inquiry_no));
-                if (result["status"].ToString() == "0")
-                    ServerLog.Log("Error Sending Activation Email");
-
-                //  ServerLog.SuccessLog("Driver notification Updated Inq Id = " + loadinqid);
-                return BLGeneralUtil.return_ajax_string("1", "Order Completed Successfully ");
-            }
-            catch (Exception ex)
-            {
-                ServerLog.Log(ex.Message + Environment.NewLine + ex.StackTrace);
-                if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                return BLGeneralUtil.return_ajax_string("0", ex.Message);
-            }
-
-        }
-
-        [HttpPost]
         public string CancelOrderByadmin([FromBody]JObject ord)
         {
             #region Validation
@@ -2390,6 +1906,7 @@ namespace trukkerUAE.Controllers
             {
                 return BLGeneralUtil.return_ajax_string("0", "Please Provide Inquiry ID");
             }
+
 
             #endregion
 
@@ -2415,7 +1932,7 @@ namespace trukkerUAE.Controllers
                     dsdrv = master.CreateDataSet(tord);
                 }
                 // get order details by load inquiry number from order table
-                DataTable dt_order = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
+                DataTable dt_order = ObjPostOrder.GetLoadInquiryById(tord[0].load_inquiry_no);
                 if (dt_order == null)
                     return BLGeneralUtil.return_ajax_string("0", " Order details Not found");
 
@@ -2438,7 +1955,7 @@ namespace trukkerUAE.Controllers
 
 
                 // get order details by load inquiry number from post_load_inquiry table
-                DataTable dt_loadinq = objcntrlpostorder.GetLoadInquiryById(tord[0].load_inquiry_no);
+                DataTable dt_loadinq = ObjPostOrder.GetLoadInquiryById(tord[0].load_inquiry_no);
                 if (dt_loadinq == null)
                     return BLGeneralUtil.return_ajax_string("0", " Load Inquiry details Not found");
 
@@ -2459,7 +1976,7 @@ namespace trukkerUAE.Controllers
                 loadinqid = tord[0].load_inquiry_no.ToString();
                 driverController objDriver = new driverController();
 
-                DataTable dt_quote = objcntrlpostorder.GetLoadInquiryQuotationById(loadinqid, ownid);
+                DataTable dt_quote = ObjPostOrder.GetLoadInquiryQuotationById(loadinqid, ownid);
                 DataTable dt_truck_currentPO = objDriver.GetTruckCurrentPositionById(loadinqid);
 
                 DBConnection.Open();
@@ -2765,52 +2282,6 @@ namespace trukkerUAE.Controllers
                                 if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
                                 return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
                             }
-                        }
-                    }
-                }
-
-                #endregion
-
-                #region Delete Addon details
-                if (tord[0].IsCancel == "Y")
-                {
-                    if (tord[0].AddOnTransactionIds.Trim() != "")
-                    {
-                        String[] strAddonTrnIds = tord[0].AddOnTransactionIds.Trim().Split(',');
-                        if (strAddonTrnIds.Length > 0)
-                        {
-                            for (int i = 0; i < strAddonTrnIds.Length; i++)
-                            {
-                                DataTable dtaddondetails = new AdminController().SelectOrderAddonDetailsByInqID("", strAddonTrnIds[i]);
-                                dtaddondetails = BLGeneralUtil.CheckDateTime(dtaddondetails);
-                                try
-                                {
-                                    dsord.EnforceConstraints = false;
-                                    dsord.order_AddonService_details.ImportRow(dtaddondetails.Rows[0]);
-                                    dsord.order_AddonService_details.AcceptChanges();
-                                    dsord.order_AddonService_details[0].Delete();
-
-                                    dsord.EnforceConstraints = true;
-
-                                    objBLobj = master.UpdateTables(dsord.order_AddonService_details, ref DBCommand);
-                                    if (objBLobj.ExecutionStatus == 2)
-                                    {
-                                        ServerLog.Log(objBLobj.ServerMessage.ToString());
-                                        if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                        if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                        objBLobj.ExecutionStatus = 2;
-                                        return BLGeneralUtil.return_ajax_string("0", objBLobj.ServerMessage);
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    ServerLog.Log(ex.Message + Environment.NewLine + ex.StackTrace);
-                                    if (DBCommand.Transaction != null) DBCommand.Transaction.Rollback();
-                                    if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
-                                    return BLGeneralUtil.return_ajax_string("0", ex.Message);
-                                }
-                            }
-
                         }
                     }
                 }
@@ -2871,160 +2342,107 @@ namespace trukkerUAE.Controllers
                 DataTable dtPostLoadOrders = new DataTable();
                 StringBuilder SQLSelect = new StringBuilder();
 
-                #region MyRegion
+                SQLSelect.Append(@"select statusFinal as status,* from ( select  res_inner.Total_PT_charge,res_inner.Total_PT_Discount,res_inner.PT_SizeTypeCode,res_inner.Total_CL_Charge,res_inner.Total_CL_Discount,
+                                    res_inner.CL_SizeTypeCode,res_inner.Total_PEST_Charge,res_inner.Total_PEST_Discount,res_inner.PEST_SizeTypeCode,(select top 1 mover_Name from order_driver_truck_details join mover_mst on mover_mst.mover_id=order_driver_truck_details.mover_id where load_inquiry_no=lstorder.load_inquiry_no) as mover_name,driver_mst.mobile_no,driver_mst.driver_photo,driver_mst.Name as drivername,quote_hdr.GeneratedPdfLink as cbm_GeneratedPdfLink,truckdetails.*,quote_hdr.total_cbm,quote_hdr.StatusFlag,status1 as statusFinal,
+                                                feedback_mst.star_rating as feedback_rating,feedback_mst.feedback as feedback_msg,
+                                                (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =lstorder.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,lstorder.* from (
+                                                          select result.status AS status1,order_driver_truck_details_summary.NoOfAssignedDriver, order_driver_truck_details_summary.NoOfAssignedTruck,  
+                                                          order_driver_truck_details_summary.NoOfAssignedHandiman, order_driver_truck_details_summary.NoOfAssignedLabour,  result.*,
+                                                          (SELECT   top(1)  truck_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_truck_id,
+                                                          (SELECT   top(1)  driver_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_id
+                                                          from 
+                                                          ( 
+                                                        select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id1' OrderKey  
+                                                        from orders    
+                                                        JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+                                                        join user_mst on user_mst.unique_id =  orders.shipper_id
+                                                        join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
+                                                        Where 1=1 and orders.active_flag  = 'Y' 
+                                                        ) result 	  
+                                                        LEFT OUTER JOIN 	
+                                                        ( 
+                                                            select 	load_inquiry_no,COUNT(*) as NoOfAssignedDriver, COUNT(*) as NoOfAssignedTruck, SUM(CAST(NoOfHandiman AS int)) as NoOfAssignedHandiman, SUM(CAST(NoOfLabour AS int)) as NoOfAssignedLabour
+                                                            from  order_driver_truck_details 
+                                                            group by load_inquiry_no
+                                                        ) as order_driver_truck_details_summary	  
+                                                        ON result.load_inquiry_no = order_driver_truck_details_summary.load_inquiry_no
+                                                ) as lstorder  
+                                                left join (
+                                                        SELECT distinct truck_mst.truck_id,truck_mst.body_type,truck_mst.truck_model,truck_mst.truck_make_id
+                                                        ,truck_make_mst.make_name,truck_model_mst.model_desc,truck_body_mst.truck_body_desc, 
+                                                        truck_rto_registration_detail.vehicle_reg_no,truck_rto_registration_detail.reg_doc_copy,truck_rto_registration_detail.vehicle_regno_copy, 
+                                                        truck_permit_details.permit_type,truck_permit_details.permit_no,truck_permit_details.valid_from,truck_permit_details.valid_upto,truck_permit_details.permit_photo 
+                                                        from truck_mst 
+                                                        left join truck_make_mst on truck_mst.truck_make_id = truck_make_mst.make_id 
+                                                        left join truck_model_mst on truck_mst.truck_model = truck_model_mst.model_id 
+                                                        left join truck_rto_registration_detail on truck_mst.truck_id = truck_rto_registration_detail.truck_id 
+                                                        left join truck_permit_details on truck_mst.truck_id = truck_permit_details.truck_id 
+                                                        left join truck_body_mst on truck_mst.body_type = truck_body_mst.truck_body_id
+                                                ) as truckdetails on lstorder.driver_truck_id=truckdetails.truck_id
+                                                left join driver_mst on lstorder.driver_id = driver_mst.driver_id 
+                                                left join feedback_mst on lstorder.load_inquiry_no =  Feedback_mst.load_inquiry_no
+                                                LEFT OUTER JOIN quote_hdr ON lstorder.load_inquiry_no = quote_hdr.quote_id 
+                                                left join(
+	                                                                select * from(
+                                                                              select load_inquiry_no,('Total_'+ServiceTypeCode+'_Charge')as ServiceTypeCode,Cast(ServiceCharge AS Varchar(50)) as ServiceCharge 
+                                                                            from order_AddonService_details
+                                                                        union
+                                                                            select load_inquiry_no,('Total_'+ServiceTypeCode+'_Discount')as ServiceTypeCode,Cast(ServiceDiscount  AS Varchar(50)) as ServiceCharge 
+                                                                            from order_AddonService_details
+                                                                        union
+                                                                            select load_inquiry_no,(ServiceTypeCode+'_SizeTypeCode')as ServiceTypeCode,SizeTypeMst.SizeTypeDesc 
+                                                                            from order_AddonService_details join SizeTypeMst on SizeTypeMst.SizeTypeCode=order_AddonService_details.SizeTypeCode
+                                                                    )res
+                                                                    PIVOT(
+                                                                        MAX(ServiceCharge) For ServiceTypeCode in (Total_PT_Charge,Total_PT_Discount,PT_SizeTypeCode,Total_CL_Charge,Total_CL_Discount,CL_SizeTypeCode,Total_PEST_Charge,Total_PEST_Discount,PEST_SizeTypeCode)
+                                                                    )pivot2
+                                                                )res_inner on res_inner.load_inquiry_no = lstorder.load_inquiry_no
+                                                ) as tblfinal
+                                                where  1=1");
 
+                //                SQLSelect.Append(@"select statusFinal as status,* from ( select  driver_mst.mobile_no,driver_mst.driver_photo,driver_mst.Name as drivername,quote_hdr.GeneratedPdfLink as cbm_GeneratedPdfLink,truckdetails.*,quote_hdr.total_cbm,quote_hdr.StatusFlag,status1 as statusFinal,
+                //                                                feedback_mst.star_rating as feedback_rating,feedback_mst.feedback as feedback_msg,
+                //                                                (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =lstorder.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,lstorder.* from (
+                //                                                          select CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status1,order_driver_truck_details_summary.NoOfAssignedDriver, order_driver_truck_details_summary.NoOfAssignedTruck,  
+                //                                                          order_driver_truck_details_summary.NoOfAssignedHandiman, order_driver_truck_details_summary.NoOfAssignedLabour,  result.*,
+                //                                                          (SELECT   top(1)  truck_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_truck_id,
+                //                                                          (SELECT   top(1)  driver_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_id
+                //                                                          from 
+                //                                                          ( 
+                //                                                        select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id1' OrderKey  
+                //                                                        from orders    
+                //                                                        JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+                //                                                        join user_mst on user_mst.unique_id =  orders.shipper_id
+                //                                                        join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
+                //                                                        Where 1=1 and orders.active_flag  = 'Y' 
+                //                                                        ) result 	  
+                //                                                        LEFT OUTER JOIN 	
+                //                                                        ( 
+                //                                                            select 	load_inquiry_no,COUNT(*) as NoOfAssignedDriver, COUNT(*) as NoOfAssignedTruck, SUM(CAST(NoOfHandiman AS int)) as NoOfAssignedHandiman, SUM(CAST(NoOfLabour AS int)) as NoOfAssignedLabour
+                //                                                            from  order_driver_truck_details 
+                //                                                            group by load_inquiry_no
+                //                                                        ) as order_driver_truck_details_summary	  
+                //                                                        ON result.load_inquiry_no = order_driver_truck_details_summary.load_inquiry_no
+                //                                                        LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no 
+                //                                                ) as lstorder  
+                //                                                left join (
+                //                                                        SELECT distinct truck_mst.truck_id,truck_mst.body_type,truck_mst.truck_model,truck_mst.truck_make_id
+                //                                                        ,truck_make_mst.make_name,truck_model_mst.model_desc,truck_body_mst.truck_body_desc, 
+                //                                                        truck_rto_registration_detail.vehicle_reg_no,truck_rto_registration_detail.reg_doc_copy,truck_rto_registration_detail.vehicle_regno_copy, 
+                //                                                        truck_permit_details.permit_type,truck_permit_details.permit_no,truck_permit_details.valid_from,truck_permit_details.valid_upto,truck_permit_details.permit_photo 
+                //                                                        from truck_mst 
+                //                                                        left join truck_make_mst on truck_mst.truck_make_id = truck_make_mst.make_id 
+                //                                                        left join truck_model_mst on truck_mst.truck_model = truck_model_mst.model_id 
+                //                                                        left join truck_rto_registration_detail on truck_mst.truck_id = truck_rto_registration_detail.truck_id 
+                //                                                        left join truck_permit_details on truck_mst.truck_id = truck_permit_details.truck_id 
+                //                                                        left join truck_body_mst on truck_mst.body_type = truck_body_mst.truck_body_id
+                //                                                ) as truckdetails on lstorder.driver_truck_id=truckdetails.truck_id
+                //                                                left join driver_mst on lstorder.driver_id = driver_mst.driver_id 
+                //                                                left join feedback_mst on lstorder.load_inquiry_no =  Feedback_mst.load_inquiry_no
+                //                                                LEFT OUTER JOIN quote_hdr ON lstorder.load_inquiry_no = quote_hdr.quote_id 
+                //                                                ) as tblfinal
+                //                                                where  1=1");
 
-                //                SQLSelect.Append(@"select statusFinal as status,* from ( select  res_inner.Total_PT_charge,res_inner.Total_PT_Discount,res_inner.PT_SizeTypeCode,res_inner.Total_CL_Charge,res_inner.Total_CL_Discount,
-                //                                            res_inner.CL_SizeTypeCode,res_inner.Total_PEST_Charge,res_inner.Total_PEST_Discount,res_inner.PEST_SizeTypeCode,(select top 1 mover_Name from order_driver_truck_details join mover_mst on mover_mst.mover_id=order_driver_truck_details.mover_id where load_inquiry_no=lstorder.load_inquiry_no) as mover_name,driver_mst.mobile_no,driver_mst.driver_photo,driver_mst.Name as drivername,quote_hdr.GeneratedPdfLink as cbm_GeneratedPdfLink,truckdetails.*,quote_hdr.total_cbm,quote_hdr.StatusFlag,status1 as statusFinal,
-                //                                                        feedback_mst.star_rating as feedback_rating,feedback_mst.feedback as feedback_msg,
-                //                                                        (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =lstorder.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,lstorder.* from (
-                //                                                                  select result.status AS status1,order_driver_truck_details_summary.NoOfAssignedDriver, order_driver_truck_details_summary.NoOfAssignedTruck,  
-                //                                                                  order_driver_truck_details_summary.NoOfAssignedHandiman, order_driver_truck_details_summary.NoOfAssignedLabour,  result.*,
-                //                                                                  (SELECT   top(1)  truck_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_truck_id,
-                //                                                                  (SELECT   top(1)  driver_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_id
-                //                                                                  from 
-                //                                                                  ( 
-                //                                                                select    SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc, orders.*,'id1' OrderKey  
-                //                                                                from orders    
-                //                                                                JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-                //                                                                join user_mst on user_mst.unique_id =  orders.shipper_id
-                //                                                                join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
-                //                                                                Where 1=1 and orders.active_flag  = 'Y' 
-                //                                                                ) result 	  
-                //                                                                LEFT OUTER JOIN 	
-                //                                                                ( 
-                //                                                                    select 	load_inquiry_no,COUNT(*) as NoOfAssignedDriver, COUNT(*) as NoOfAssignedTruck, SUM(CAST(NoOfHandiman AS int)) as NoOfAssignedHandiman, SUM(CAST(NoOfLabour AS int)) as NoOfAssignedLabour
-                //                                                                    from  order_driver_truck_details 
-                //                                                                    group by load_inquiry_no
-                //                                                                ) as order_driver_truck_details_summary	  
-                //                                                                ON result.load_inquiry_no = order_driver_truck_details_summary.load_inquiry_no
-                //                                                        ) as lstorder  
-                //                                                        left join (
-                //                                                                SELECT distinct truck_mst.truck_id,truck_mst.body_type,truck_mst.truck_model,truck_mst.truck_make_id
-                //                                                                ,truck_make_mst.make_name,truck_model_mst.model_desc,truck_body_mst.truck_body_desc, 
-                //                                                                truck_rto_registration_detail.vehicle_reg_no,truck_rto_registration_detail.reg_doc_copy,truck_rto_registration_detail.vehicle_regno_copy, 
-                //                                                                truck_permit_details.permit_type,truck_permit_details.permit_no,truck_permit_details.valid_from,truck_permit_details.valid_upto,truck_permit_details.permit_photo 
-                //                                                                from truck_mst 
-                //                                                                left join truck_make_mst on truck_mst.truck_make_id = truck_make_mst.make_id 
-                //                                                                left join truck_model_mst on truck_mst.truck_model = truck_model_mst.model_id 
-                //                                                                left join truck_rto_registration_detail on truck_mst.truck_id = truck_rto_registration_detail.truck_id 
-                //                                                                left join truck_permit_details on truck_mst.truck_id = truck_permit_details.truck_id 
-                //                                                                left join truck_body_mst on truck_mst.body_type = truck_body_mst.truck_body_id
-                //                                                        ) as truckdetails on lstorder.driver_truck_id=truckdetails.truck_id
-                //                                                        left join driver_mst on lstorder.driver_id = driver_mst.driver_id 
-                //                                                        left join feedback_mst on lstorder.load_inquiry_no =  Feedback_mst.load_inquiry_no
-                //                                                        LEFT OUTER JOIN quote_hdr ON lstorder.load_inquiry_no = quote_hdr.quote_id 
-                //                                                        left join(
-                //        	                                                                select * from(
-                //                                                                                      select load_inquiry_no,('Total_'+ServiceTypeCode+'_Charge')as ServiceTypeCode,Cast(ServiceCharge AS Varchar(50)) as ServiceCharge 
-                //                                                                                    from order_AddonService_details
-                //                                                                                union
-                //                                                                                    select load_inquiry_no,('Total_'+ServiceTypeCode+'_Discount')as ServiceTypeCode,Cast(ServiceDiscount  AS Varchar(50)) as ServiceCharge 
-                //                                                                                    from order_AddonService_details
-                //                                                                                union
-                //                                                                                    select load_inquiry_no,(ServiceTypeCode+'_SizeTypeCode')as ServiceTypeCode,SizeTypeMst.SizeTypeDesc 
-                //                                                                                    from order_AddonService_details join SizeTypeMst on SizeTypeMst.SizeTypeCode=order_AddonService_details.SizeTypeCode
-                //                                                                            )res
-                //                                                                            PIVOT(
-                //                                                                                MAX(ServiceCharge) For ServiceTypeCode in (Total_PT_Charge,Total_PT_Discount,PT_SizeTypeCode,Total_CL_Charge,Total_CL_Discount,CL_SizeTypeCode,Total_PEST_Charge,Total_PEST_Discount,PEST_SizeTypeCode)
-                //                                                                            )pivot2
-                //                                                                        )res_inner on res_inner.load_inquiry_no = lstorder.load_inquiry_no
-                //                                                        ) as tblfinal
-                //                                                        where  1=1");
-
-                #endregion
-
-                SQLSelect.Append(@" select statusFinal as status,* from ( select ROW_NUMBER() OVER(ORDER BY load_inquiry_no) AS SrNo,* from ( 
-                                        select  res_inner.Total_PT_charge,res_inner.Total_PT_Discount,res_inner.PT_SizeTypeCode,res_inner.Total_CL_Charge,res_inner.Total_CL_Discount,
-                                        res_inner.CL_SizeTypeCode,res_inner.Total_PEST_Charge,res_inner.Total_PEST_Discount,res_inner.PEST_SizeTypeCode,(
-                                        select top 1 mover_Name from order_driver_truck_details join mover_mst on mover_mst.mover_id=order_driver_truck_details.mover_id where load_inquiry_no=lstorder.load_inquiry_no) as mover_name,
-                                        driver_mst.mobile_no,driver_mst.driver_photo,driver_mst.Name as drivername,quote_hdr.GeneratedPdfLink as cbm_GeneratedPdfLink,quote_hdr.total_cbm,quote_hdr.StatusFlag,status1 as statusFinal,
-                                        feedback_mst.star_rating as feedback_rating,feedback_mst.feedback as feedback_msg,(SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =lstorder.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,lstorder.* 
-                                        from 
-                                        (
-                                        select distinct CASE WHEN order_cancellation_details.cancellation_id IS not NULL THEN '25'
-                                                        --WHEN order_reschedule_req_details.RescheduleReq_id IS not NULL and order_reschedule_req_details.active_flag='N' THEN '26' 
-                                                        else result.status
-                                        END AS status1,order_driver_truck_details_summary.NoOfAssignedDriver, order_driver_truck_details_summary.NoOfAssignedTruck, order_driver_truck_details_summary.NoOfAssignedHandiman, order_driver_truck_details_summary.NoOfAssignedLabour,  result.*,
-                                        (SELECT   top(1)  truck_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_truck_id,(SELECT   top(1)  driver_id  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no)) as driver_id
-                                            from 
-                                            ( 
-			                                        select    orders.order_id, orders.shipper_id, orders.load_inquiry_no, orders.isassign_driver_truck, orders.isassign_mover, orders.shipper_email_id, orders.inquiry_source_addr, orders.inquiry_source_city,  
-                                                              orders.aprox_days, orders.load_inquiry_shipping_date, orders.load_inquiry_shipping_time, orders.required_price, orders.status, orders.active_flag, orders.LR_Issued, orders.trackurl, orders.Remark, orders.IsCancel, orders.receipt_imagepath, 
-                                                              orders.SizeTypeCode, orders.TotalDistance, orders.TotalDistanceUOM, orders.TimeToTravelInMinute, orders.NoOfTruck, orders.NoOfDriver, orders.NoOfLabour, orders.NoOfHandiman, orders.NoOfSupervisor, 
-                                                              orders.IncludePackingCharge, orders.TotalPackingCharge, orders.Total_cost, orders.coupon_code, orders.Discount, Total_cost_without_discount, rem_amt_to_receive, shippingdatetime, Area, 
-                                                              orders.rate_type_flag, orders.order_type_flag, orders.goods_type_flag, orders.payment_status, orders.payment_mode, orders.billing_name, orders.source_full_add, orders.destination_full_add, orders.billing_add, orders.cbmlink, 
-                                                              orders.created_by, orders.created_date, orders.BaseRate, orders.TotalTravelingRate, orders.TotalDriverRate, orders.TotalLabourRate, TotalHandimanRate, orders.TotalSupervisorRate, orders.goods_details, orders.goods_weight, 
-                                                              orders.goods_weightUOM, orders.payment_due_date, orders.last_outstanding_reminder_send_datetime, orders.invoice_pdf_link, orders.IsDraft, orders.Notes,orders.owner_id, orders.inquiry_destination_addr,orders.MultiDrop_flag,
-                                                                orders.Hiretruck_To_datetime,orders.Hiretruck_NoofDay,orders.Hiretruck_TotalDayRate,orders.Hiretruck_IncludingFuel,orders.Hiretruck_TotalFuelRate,
-                                                                orders.Hiretruck_MaxKM,orders.AddSerBaseDiscount,orders.TotalAddServiceDiscount,orders.TotalAddServiceCharge,orders.IncludeAddonService,orders.Total_cost_without_addon,
-    		                                        SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc,'id1' OrderKey  
-    		                                        from orders    
-    		                                        JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-    		                                        join user_mst on user_mst.unique_id =  orders.shipper_id
-    		                                        join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
-    		                                        Where 1=1 and orders.active_flag  = 'Y' 
-    		                                        and orders.shippingdatetime>getdate()  
-    		                                        UNION ALL 
-    		                                        select     orders.order_id, orders.shipper_id, orders.load_inquiry_no, orders.isassign_driver_truck, orders.isassign_mover, orders.shipper_email_id, orders.inquiry_source_addr, orders.inquiry_source_city,  
-                                                              orders.aprox_days, orders.load_inquiry_shipping_date, orders.load_inquiry_shipping_time, orders.required_price, orders.status, orders.active_flag, orders.LR_Issued, orders.trackurl, orders.Remark, orders.IsCancel, orders.receipt_imagepath, 
-                                                              orders.SizeTypeCode, orders.TotalDistance, orders.TotalDistanceUOM, orders.TimeToTravelInMinute, orders.NoOfTruck, orders.NoOfDriver, orders.NoOfLabour, orders.NoOfHandiman, orders.NoOfSupervisor, 
-                                                              orders.IncludePackingCharge, orders.TotalPackingCharge, orders.Total_cost, orders.coupon_code, orders.Discount, Total_cost_without_discount, rem_amt_to_receive, shippingdatetime, Area, 
-                                                              orders.rate_type_flag, orders.order_type_flag, orders.goods_type_flag, orders.payment_status, orders.payment_mode, orders.billing_name, orders.source_full_add, orders.destination_full_add, orders.billing_add, orders.cbmlink, 
-                                                              orders.created_by, orders.created_date, orders.BaseRate, orders.TotalTravelingRate, orders.TotalDriverRate, orders.TotalLabourRate, TotalHandimanRate, orders.TotalSupervisorRate, orders.goods_details, orders.goods_weight, 
-                                                              orders.goods_weightUOM, orders.payment_due_date, orders.last_outstanding_reminder_send_datetime, orders.invoice_pdf_link, orders.IsDraft, orders.Notes,orders.owner_id, orders.inquiry_destination_addr,orders.MultiDrop_flag,
-                                                                orders.Hiretruck_To_datetime,orders.Hiretruck_NoofDay,orders.Hiretruck_TotalDayRate,orders.Hiretruck_IncludingFuel,orders.Hiretruck_TotalFuelRate,
-                                                                orders.Hiretruck_MaxKM,orders.AddSerBaseDiscount,orders.TotalAddServiceDiscount,orders.TotalAddServiceCharge,orders.IncludeAddonService,orders.Total_cost_without_addon,
-    		                                        SizeTypeMatrix.CBM_Max,user_mst.user_id as shipper_mobileno,user_mst.first_name AS username, SizeTypeMst.SizeTypeDesc,'id2' OrderKey from orders  
-    		                                        JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
-    		                                        join user_mst on user_mst.unique_id =  orders.shipper_id
-    		                                        join SizeTypeMatrix on SizeTypeMatrix.sizetypecode=  orders.sizetypecode and SizeTypeMatrix.rate_type_flag=orders.rate_type_flag
-    		                                        Where 1=1 and orders.active_flag  = 'Y'
-    		                                        and orders.shippingdatetime<getdate() 
-                                            ) result 	  
-                                            LEFT OUTER JOIN 	
-                                            ( 
-    	                                        select 	load_inquiry_no,COUNT(*) as NoOfAssignedDriver, COUNT(*) as NoOfAssignedTruck, SUM(CAST(NoOfHandiman AS int)) as NoOfAssignedHandiman, SUM(CAST(NoOfLabour AS int)) as NoOfAssignedLabour
-    	                                        from  order_driver_truck_details 
-    	                                        group by load_inquiry_no
-                                            ) as order_driver_truck_details_summary	  
-                                            ON result.load_inquiry_no = order_driver_truck_details_summary.load_inquiry_no
-                                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no 
-                                            --  LEFT OUTER JOIN order_reschedule_req_details ON result.load_inquiry_no = order_reschedule_req_details.load_inquiry_no 
-                                        ) as lstorder  
-                                        left join 
-                                        (
-                                            SELECT distinct truck_mst.truck_id,truck_mst.body_type,truck_mst.truck_model,truck_mst.truck_make_id
-                                            ,truck_make_mst.make_name,truck_model_mst.model_desc,truck_body_mst.truck_body_desc, 
-                                            truck_rto_registration_detail.vehicle_reg_no,truck_rto_registration_detail.reg_doc_copy,truck_rto_registration_detail.vehicle_regno_copy, 
-                                            truck_permit_details.permit_type,truck_permit_details.permit_no,truck_permit_details.valid_from,truck_permit_details.valid_upto,truck_permit_details.permit_photo 
-                                            from truck_mst 
-                                            left join truck_make_mst on truck_mst.truck_make_id = truck_make_mst.make_id 
-                                            left join truck_model_mst on truck_mst.truck_model = truck_model_mst.model_id 
-                                            left join truck_rto_registration_detail on truck_mst.truck_id = truck_rto_registration_detail.truck_id 
-                                            left join truck_permit_details on truck_mst.truck_id = truck_permit_details.truck_id 
-                                            left join truck_body_mst on truck_mst.body_type = truck_body_mst.truck_body_id
-                                        ) as truckdetails on lstorder.driver_truck_id=truckdetails.truck_id
-                                        left join driver_mst on lstorder.driver_id = driver_mst.driver_id 
-                                        left join feedback_mst on lstorder.load_inquiry_no =  Feedback_mst.load_inquiry_no
-                                        LEFT OUTER JOIN quote_hdr ON lstorder.load_inquiry_no = quote_hdr.quote_id 
-                                            left join(
-                                                        select * from(
-                                                            select load_inquiry_no,('Total_'+ServiceTypeCode+'_Charge')as ServiceTypeCode,Cast(ServiceCharge AS Varchar(50)) as ServiceCharge 
-                                                            from order_AddonService_details
-                                                        union
-                                                            select load_inquiry_no,('Total_'+ServiceTypeCode+'_Discount')as ServiceTypeCode,Cast(ServiceDiscount  AS Varchar(50)) as ServiceCharge 
-                                                            from order_AddonService_details
-                                                        union
-                                                            select load_inquiry_no,(ServiceTypeCode+'_SizeTypeCode')as ServiceTypeCode,SizeTypeMst.SizeTypeDesc 
-                                                            from order_AddonService_details join SizeTypeMst on SizeTypeMst.SizeTypeCode=order_AddonService_details.SizeTypeCode
-                                                        )res
-                                                        PIVOT(
-                                                            MAX(ServiceCharge) For ServiceTypeCode in (Total_PT_Charge,Total_PT_Discount,PT_SizeTypeCode,Total_CL_Charge,Total_CL_Discount,CL_SizeTypeCode,Total_PEST_Charge,Total_PEST_Discount,PEST_SizeTypeCode)
-                                                        )pivot2
-                                                    )res_inner on res_inner.load_inquiry_no = lstorder.load_inquiry_no
-                                        ) as tblfinal
-                                        where  1=1 ");
 
                 if (status != "")
                 {
@@ -3080,13 +2498,13 @@ namespace trukkerUAE.Controllers
                 if (OrderBy != "")
                 {
                     if (OrderBy == "M")
-                        SQLSelect.Append(" ) as tblpg where 1=1 order by shippingdatetime " + SortBy);
+                        SQLSelect.Append(" order by shippingdatetime " + SortBy);
                     else
-                        SQLSelect.Append(" ) as tblpg where 1=1 order by created_date " + SortBy);
+                        SQLSelect.Append(" order by created_date " + SortBy);
                 }
 
                 if (Assigndriver == "" && OrderBy == "" && SortBy != "")
-                    SQLSelect.Append(" ) as tblpg where 1=1 order by shippingdatetime desc ");
+                    SQLSelect.Append("  order by shippingdatetime desc ");
 
                 DBDataAdpterObject.SelectCommand.Parameters.Clear();
                 DBDataAdpterObject.SelectCommand.CommandText = SQLSelect.ToString();
@@ -3132,7 +2550,7 @@ namespace trukkerUAE.Controllers
             }
 
             DataTable dtdriverTruckDtl = new driverController().GetOrderDriverTruckDetails(objOrder[0].load_inquiry_no);
-            DataTable dtorderdetail = objcntrlpostorder.GetLoadInquiryById(objOrder[0].load_inquiry_no);
+            DataTable dtorderdetail = ObjPostOrder.GetLoadInquiryById(objOrder[0].load_inquiry_no);
             DataTable dt_ReRqorders = new PostOrderController().GetRescheduleRequestDetailsByInq(objOrder[0].load_inquiry_no);
 
             if (dtorderdetail != null)
@@ -3144,7 +2562,7 @@ namespace trukkerUAE.Controllers
                     DBCommand.Transaction = DBConnection.BeginTransaction();
                     message = "";
 
-                    string shipperEmail = objcntrlpostorder.GetEmailByID(dtorderdetail.Rows[0]["shipper_id"].ToString());
+                    string shipperEmail = ObjPostOrder.GetEmailByID(dtorderdetail.Rows[0]["shipper_id"].ToString());
                     string shippername = new PostOrderController().GetUserdetailsByID(dtorderdetail.Rows[0]["shipper_id"].ToString());
                     DateTime rescheduleShippingDateTime = Convert.ToDateTime(Convert.ToDateTime(dtparameter.Rows[0]["load_inquiry_shipping_date"].ToString()).ToShortDateString() + " " + TimeSpan.Parse(dtparameter.Rows[0]["load_inquiry_shipping_time"].ToString()));
 
@@ -3289,18 +2707,18 @@ namespace trukkerUAE.Controllers
                 Master master = new Master();
                 BLReturnObject objBLobj = new BLReturnObject();
                 DS_orders dsord = new DS_orders();
-                Document objdoc = new Document();string message = "";
-
+                Document objdoc = new Document();
 
                 // get order details by load inquiry number from order table
-                DataTable dt_order = objcntrlpostorder.GetLoadInquiryById(Jobj["load_inquiry_no"].ToString());
+                DataTable dt_order = ObjPostOrder.GetLoadInquiryById(Jobj["load_inquiry_no"].ToString());
                 if (dt_order == null)
                     return BLGeneralUtil.return_ajax_string("0", " Order details Not found ");
 
                 DBConnection.Open();
                 if (DBConnection.State == ConnectionState.Closed) DBConnection.Open();
                 DBCommand.Transaction = DBConnection.BeginTransaction();
-                
+                string message = "";
+
                 #region Update Date In Orders Table
 
                 if (dt_order != null)
@@ -3342,7 +2760,6 @@ namespace trukkerUAE.Controllers
 
         }
 
-
         [HttpGet]
         public string GetOrdersCountsOld(string fromdate, string todate)
         {
@@ -3353,49 +2770,49 @@ namespace trukkerUAE.Controllers
             if (fromdate == null && todate == null)
             {
                 SQLSelect.Append(@"select   GL_02+GL_10+GL_25+ GL_45+ GN_02+GN_10+ GN_25+ GN_45+ H_02+H_10+ H_25+ H_45 as TotalOrders,
-                                                      H_02+H_10+ H_25+ H_45  as Moving_home,
-                                                     GN_02+GN_10+ GN_25+ GN_45 as Goods_Now,
-                                                     GL_02+GL_10+GL_25+ GL_45 as Goods_later,
-                                                    GL_10+GN_10+H_10 as Totalongoing,GL_02+GN_02+H_02 as totalupcoming,
-                                                    GL_45+GN_45+H_45 as totalcompleted,GL_25+GN_25+H_25 as totalcancel,
-                                                    GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,
-        	                            (select Count(*) from user_mst where role_id not in ('AD')) as Total_Users,
-        	                            (select Count(*) from user_mst where role_id='SH')   as Shipper,
-                                        (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' )   as totaldrivers,
-                                        (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='Y' )   as freedrivers, 
-                                        (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='N' )   as busydrivers, 
-        	                            (select Count(*) from truck_mst where active_flag='Y')   as totaltrucks 
-        	                            from (
-                                    select order_type_flag+'_'+status_final as order_type_flag_status,load_inquiry_no from (
-                                    select   case 
-        		                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        		                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,*
-                                     from (
-        		                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
-        		                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,result.created_date
-        		                            from 
-        		                            ( 
-        			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        			                            from orders    
-        			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        			                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        			                            Where 1=1 and orders.active_flag  = 'Y' 
-        			                            and orders.shippingdatetime>getdate()  
-        			                            UNION ALL 
-        			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id2' OrderKey from orders  
-        			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
-        			                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        			                            Where 1=1 and orders.active_flag  = 'Y' 
-        			                            and orders.shippingdatetime<getdate() 
-        		                            ) result 	  
-        		                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no
-                                    ) tblfinal
-                                    ) tbltemp 
-                                    )TableToBePivot
-                                    PIVOT
-        	                            (
-        	                            COUNT(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45) 
-        	                            ) AS PivotedTable");
+                                              H_02+H_10+ H_25+ H_45  as Moving_home,
+                                             GN_02+GN_10+ GN_25+ GN_45 as Goods_Now,
+                                             GL_02+GL_10+GL_25+ GL_45 as Goods_later,
+                                            GL_10+GN_10+H_10 as Totalongoing,GL_02+GN_02+H_02 as totalupcoming,
+                                            GL_45+GN_45+H_45 as totalcompleted,GL_25+GN_25+H_25 as totalcancel,
+                                            GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,
+	                            (select Count(*) from user_mst where role_id not in ('AD')) as Total_Users,
+	                            (select Count(*) from user_mst where role_id='SH')   as Shipper,
+                                (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' )   as totaldrivers,
+                                (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='Y' )   as freedrivers, 
+                                (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='N' )   as busydrivers, 
+	                            (select Count(*) from truck_mst where active_flag='Y')   as totaltrucks 
+	                            from (
+                            select order_type_flag+'_'+status_final as order_type_flag_status,load_inquiry_no from (
+                            select   case 
+		                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+		                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,*
+                             from (
+		                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
+		                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,result.created_date
+		                            from 
+		                            ( 
+			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+			                            from orders    
+			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+			                            join user_mst on user_mst.unique_id =  orders.shipper_id
+			                            Where 1=1 and orders.active_flag  = 'Y' 
+			                            and orders.shippingdatetime>getdate()  
+			                            UNION ALL 
+			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id2' OrderKey from orders  
+			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
+			                            join user_mst on user_mst.unique_id =  orders.shipper_id
+			                            Where 1=1 and orders.active_flag  = 'Y' 
+			                            and orders.shippingdatetime<getdate() 
+		                            ) result 	  
+		                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no
+                            ) tblfinal
+                            ) tbltemp 
+                            )TableToBePivot
+                            PIVOT
+	                            (
+	                            COUNT(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45) 
+	                            ) AS PivotedTable");
             }
             else
             {
@@ -3424,35 +2841,35 @@ namespace trukkerUAE.Controllers
                 SQLSelect.Append("from ( ");
                 SQLSelect.Append("select order_type_flag+'_'+status_final as order_type_flag_status,load_inquiry_no from (");
                 SQLSelect.Append(@"select   case 
-        		                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        		                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,*
-                                        from (
-        		                            select result.shippingdatetime,CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
-        		                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,result.created_date
-        		                            from 
-        		                            ( 
-        			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        			                            from orders    
-        			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        			                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        			                            Where 1=1 and orders.active_flag  = 'Y' 
-        			                            and orders.shippingdatetime>getdate()  
-        			                            UNION ALL 
-        			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id2' OrderKey from orders  
-        			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
-        			                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        			                            Where 1=1 and orders.active_flag  = 'Y' 
-        			                            and orders.shippingdatetime<getdate() 
-        		                            ) result 	  
-        		                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no
-                                        ) tblfinal where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + todate + "',103)");
+		                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+		                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,*
+                                from (
+		                            select result.shippingdatetime,CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
+		                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) ORDER BY CAST(status AS int) desc ) as final_status,result.created_date
+		                            from 
+		                            ( 
+			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+			                            from orders    
+			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+			                            join user_mst on user_mst.unique_id =  orders.shipper_id
+			                            Where 1=1 and orders.active_flag  = 'Y' 
+			                            and orders.shippingdatetime>getdate()  
+			                            UNION ALL 
+			                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id2' OrderKey from orders  
+			                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode 
+			                            join user_mst on user_mst.unique_id =  orders.shipper_id
+			                            Where 1=1 and orders.active_flag  = 'Y' 
+			                            and orders.shippingdatetime<getdate() 
+		                            ) result 	  
+		                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no
+                                ) tblfinal where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + todate + "',103)");
                 //where CONVERT(VARCHAR(10),shippingdatetime,103)>=CONVERT(VARCHAR(10)," + fromdate + ",103) and   CONVERT(VARCHAR(10),shippingdatetime,103)<=CONVERT(VARCHAR(10)," + todate + ",103)");
                 SQLSelect.Append(@") tbltemp 
-                                        )TableToBePivot
-                                        PIVOT
-        	                                (
-        	                                COUNT(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45) 
-        	                                ) AS PivotedTable");
+                                )TableToBePivot
+                                PIVOT
+	                                (
+	                                COUNT(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45) 
+	                                ) AS PivotedTable");
             }
 
             DBDataAdpterObject.SelectCommand.Parameters.Clear();
@@ -3590,70 +3007,70 @@ namespace trukkerUAE.Controllers
             if (fromdate == null && todate == null)
             {
                 SQLSelect.Append(@"select *,
-                                    (select Count(*) from user_mst where role_id not in ('AD')) as Total_Users,
-                                    (select Count(*) from user_mst where role_id='SH')   as Shipper,
-                                    (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' )   as totaldrivers,
-                                    (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='Y' )   as freedrivers, 
-                                    (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='N' )   as busydrivers, 
-                                    (select Count(*) from truck_mst where active_flag='Y')   as totaltrucks 
-                                     from (
-                                    select GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total
-                                    from
-                                    --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
-                                    (
-                                    select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result 	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no
-        		                            ) tblfinal 
-        	                            ) tbltemp 
-                                    group by order_type_flag+'_'+status_final
-                                    union all
-                                    select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
-        			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result1	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no
-        		                            ) tblfinal1 
-        	                            ) tbltemp1 
-                                    group by order_type_flag+'_'+status_final
-        
-                                    )result2
-                                    PIVOT
-                                    (
-        	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
-                                    ) AS PivotedTable1
-                                    ) as finalResult ");
+                            (select Count(*) from user_mst where role_id not in ('AD')) as Total_Users,
+                            (select Count(*) from user_mst where role_id='SH')   as Shipper,
+                            (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' )   as totaldrivers,
+                            (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='Y' )   as freedrivers, 
+                            (select COUNT(*)  from driver_mst join user_mst on driver_mst.driver_id=user_mst.unique_id where user_mst.user_status_flag='A' and driver_mst.isfree='N' )   as busydrivers, 
+                            (select Count(*) from truck_mst where active_flag='Y')   as totaltrucks 
+                             from (
+                            select GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total
+                            from
+                            --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
+                            (
+                            select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result 	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no
+		                            ) tblfinal 
+	                            ) tbltemp 
+                            group by order_type_flag+'_'+status_final
+                            union all
+                            select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
+			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result1	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no
+		                            ) tblfinal1 
+	                            ) tbltemp1 
+                            group by order_type_flag+'_'+status_final
+
+                            )result2
+                            PIVOT
+                            (
+	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
+                            ) AS PivotedTable1
+                            ) as finalResult ");
             }
             else if (fromdate != null && todate == null)
             {
@@ -3664,28 +3081,28 @@ namespace trukkerUAE.Controllers
                 SQLSelect.Append("select   * ");
                 SQLSelect.Append("from ( ");
                 SQLSelect.Append(@"select GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total
-                                    from
-                                    --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
-                                    (
-                                    select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost,result.shippingdatetime
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result 	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
+                            from
+                            --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
+                            (
+                            select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost,result.shippingdatetime
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result 	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
 
                 if (opt == "SH")
                     SQLSelect.Append(") tblfinal  where CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + fromdate + "',103) ");
@@ -3693,28 +3110,28 @@ namespace trukkerUAE.Controllers
                     SQLSelect.Append(") tblfinal  where CONVERT(date,created_date,103)<=CONVERT(date,'" + fromdate + "',103)  ");
 
                 SQLSelect.Append(@"    ) tbltemp 
-                                    group by order_type_flag+'_'+status_final
-                                    union all
-                                    select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
-        			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost,result1.shippingdatetime
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result1	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
+                            group by order_type_flag+'_'+status_final
+                            union all
+                            select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
+			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost,result1.shippingdatetime
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result1	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
 
 
                 if (opt == "SH")
@@ -3725,14 +3142,14 @@ namespace trukkerUAE.Controllers
 
                 //SQLSelect.Append(" ) tblfinal1   where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + todate + "',103) ");
                 SQLSelect.Append(@"    ) tbltemp1 
-                                    group by order_type_flag+'_'+status_final
-        
-                                    )result2
-                                    PIVOT
-                                    (
-        	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
-                                    ) AS PivotedTable1
-                                    ) as finalResult ");
+                            group by order_type_flag+'_'+status_final
+
+                            )result2
+                            PIVOT
+                            (
+	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
+                            ) AS PivotedTable1
+                            ) as finalResult ");
             }
             else if (fromdate == null && todate != null)
             {
@@ -3743,28 +3160,28 @@ namespace trukkerUAE.Controllers
                 SQLSelect.Append("select   * ");
                 SQLSelect.Append("from ( ");
                 SQLSelect.Append(@"select GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total
-                                    from
-                                    --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
-                                    (
-                                    select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost,result.shippingdatetime
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result 	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
+                            from
+                            --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
+                            (
+                            select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost,result.shippingdatetime
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result 	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
 
                 if (opt == "SH")
                     SQLSelect.Append(") tblfinal  where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + todate + "',103) ");
@@ -3772,28 +3189,28 @@ namespace trukkerUAE.Controllers
                     SQLSelect.Append(") tblfinal  where CONVERT(date,created_date,103)>=CONVERT(date,'" + todate + "',103)  ");
 
                 SQLSelect.Append(@"    ) tbltemp 
-                                    group by order_type_flag+'_'+status_final
-                                    union all
-                                    select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
-        			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost,result1.shippingdatetime
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result1	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
+                            group by order_type_flag+'_'+status_final
+                            union all
+                            select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
+			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost,result1.shippingdatetime
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result1	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
 
 
                 if (opt == "SH")
@@ -3804,14 +3221,14 @@ namespace trukkerUAE.Controllers
 
                 //SQLSelect.Append(" ) tblfinal1   where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + todate + "',103) ");
                 SQLSelect.Append(@"    ) tbltemp1 
-                                    group by order_type_flag+'_'+status_final
-        
-                                    )result2
-                                    PIVOT
-                                    (
-        	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
-                                    ) AS PivotedTable1
-                                    ) as finalResult ");
+                            group by order_type_flag+'_'+status_final
+
+                            )result2
+                            PIVOT
+                            (
+	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
+                            ) AS PivotedTable1
+                            ) as finalResult ");
             }
             else
             {
@@ -3835,28 +3252,28 @@ namespace trukkerUAE.Controllers
                 SQLSelect.Append("(select Count(*) from truck_mst where active_flag='Y' and CAST(created_date AS DATE)>='" + BLGeneralUtil.ConvertToDateTime(fromdate.ToString(), "dd/mm/yyyy") + "' and  CAST(created_date AS DATE)<= '" + BLGeneralUtil.ConvertToDateTime(todate.ToString(), "dd/mm/yyyy") + "')   as totaltrucks ");
                 SQLSelect.Append("from ( ");
                 SQLSelect.Append(@"select GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total
-                                    from
-                                    --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
-                                    (
-                                    select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost,result.shippingdatetime
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result 	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
+                            from
+                            --(select order_type_flag+'_'+status_final as order_type_flag_status,CAST(COUNT(load_inquiry_no) as varchar)+','+CAST(SUM(Total_cost) as varchar) as load_inquiry_no
+                            (
+                            select order_type_flag+'_'+status_final as order_type_flag_status, --order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            COUNT(load_inquiry_no) as load_inquiry_no--,SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result.status ELSE '25' END AS status_can,order_cancellation_details.cancellation_id,result.load_inquiry_no, result.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result.created_date,result.total_cost,result.shippingdatetime
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result 	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
 
                 if (opt == "SH")
                     SQLSelect.Append(") tblfinal  where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + todate + "',103) ");
@@ -3864,28 +3281,28 @@ namespace trukkerUAE.Controllers
                     SQLSelect.Append(") tblfinal  where CONVERT(date,created_date,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,created_date,103)<=CONVERT(date,'" + todate + "',103) ");
 
                 SQLSelect.Append(@"    ) tbltemp 
-                                    group by order_type_flag+'_'+status_final
-                                    union all
-                                    select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
-                                    SUM(Total_cost) as total_cost
-                                    from (
-        	                            select   case 
-        	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
-        	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
-        	                            from (
-        			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
-        			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
-        			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
-        			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost,result1.shippingdatetime
-        			                            from 
-        			                            ( 
-        				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
-        				                            from orders    
-        				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
-        				                            join user_mst on user_mst.unique_id =  orders.shipper_id
-        				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
-        			                            ) result1	  
-        			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
+                            group by order_type_flag+'_'+status_final
+                            union all
+                            select order_type_flag+'_'+status_final+'_total'  as order_type_flag_status_total, --, order_type_flag+'_'+status_final+'_total' as order_type_flag_status_total,
+                            SUM(Total_cost) as total_cost
+                            from (
+	                            select   case 
+	                            when final_status Is not null and final_status not in ('02','45','25') then '10'
+	                            when final_status Is not null and status_can !='25' then final_status else status_can end as status_final,* 
+	                            from (
+			                            select  CASE WHEN order_cancellation_details.cancellation_id IS NULL THEN result1.status ELSE '25' END AS status_can,
+			                            order_cancellation_details.cancellation_id,result1.load_inquiry_no, result1.order_type_flag,
+			                            (SELECT   top(1)  status  FROM  order_driver_truck_details  WHERE (load_inquiry_no =result1.load_inquiry_no) 
+			                            ORDER BY CAST(status AS int) desc ) as final_status,result1.created_date,result1.total_cost,result1.shippingdatetime
+			                            from 
+			                            ( 
+				                            select  user_mst.first_name as  username,SizeTypeMst.SizeTypeDesc,orders.*,'id1' OrderKey  
+				                            from orders    
+				                            JOIN SizeTypeMst ON SizeTypeMst.SizeTypeCode = orders.sizetypecode  
+				                            join user_mst on user_mst.unique_id =  orders.shipper_id
+				                            Where 1=1 and orders.active_flag  = 'Y' and IsCancel='N'
+			                            ) result1	  
+			                            LEFT OUTER JOIN order_cancellation_details ON result1.load_inquiry_no = order_cancellation_details.load_inquiry_no ");
 
 
                 if (opt == "SH")
@@ -3896,14 +3313,14 @@ namespace trukkerUAE.Controllers
 
                 //SQLSelect.Append(" ) tblfinal1   where CONVERT(date,shippingdatetime,103)>=CONVERT(date,'" + fromdate + "',103) and   CONVERT(date,shippingdatetime,103)<=CONVERT(date,'" + todate + "',103) ");
                 SQLSelect.Append(@"    ) tbltemp1 
-                                    group by order_type_flag+'_'+status_final
-        
-                                    )result2
-                                    PIVOT
-                                    (
-        	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
-                                    ) AS PivotedTable1
-                                    ) as finalResult ");
+                            group by order_type_flag+'_'+status_final
+
+                            )result2
+                            PIVOT
+                            (
+	                            MAX(load_inquiry_no) FOR order_type_flag_status IN (GL_02,GL_10, GL_25, GL_45, GN_02,GN_10, GN_25, GN_45, H_02,H_10, H_25, H_45,HT_02,HT_10, HT_25, HT_45,HT_45_total, HT_02_total,HT_10_total, HT_25_total,GL_02_total,GL_10_total, GL_25_total, GL_45_total, GN_02_total,GN_10_total, GN_25_total, GN_45_total, H_02_total,H_10_total, H_25_total, H_45_total) 
+                            ) AS PivotedTable1
+                            ) as finalResult ");
 
             }
 
@@ -3931,19 +3348,19 @@ namespace trukkerUAE.Controllers
             if (fromdate == null && todate == null)
             {
                 SQLSelect.Append(@" select Order_type_flag,Count(load_inquiry_no) as ReqCount
-                                        from (
-        	                                select user_mst.first_name,user_mst.user_id,post_load_inquiry.load_inquiry_no,post_load_inquiry.inquiry_source_addr,post_load_inquiry.Total_cost,
-        	                                post_load_inquiry.Order_type_flag,post_load_inquiry.created_date,post_load_inquiry.shippingdatetime,post_load_inquiry.payment_mode,post_load_inquiry.status,
-        	                                post_load_inquiry.active_flag,MONTH(post_load_inquiry.shippingdatetime)as shipping_month,YEAR(post_load_inquiry.shippingdatetime)as shipping_year 
-        	                                from post_load_inquiry 
-        	                                join user_mst on user_mst.unique_id = post_load_inquiry.shipper_id
-        	                                where shipper_id !='-9999'  and user_id not in
-        	                                ( 'admin' ,'524546471','1112345555','222222222','234678457','506517322','524693690','555429527','555791228','555791229','558643191',
-                                        '559776001','566163740','566960082','7226006454','7383607357','7567258257','8320599411','9624008877','9879006454','3333333333'	)
-                                        -- and post_load_inquiry.created_date between '2016/10/01' and '2016/11/01' 
-                                        )
-                                        as temp 
-                                        group by Order_type_flag");
+                                from (
+	                                select user_mst.first_name,user_mst.user_id,post_load_inquiry.load_inquiry_no,post_load_inquiry.inquiry_source_addr,post_load_inquiry.Total_cost,
+	                                post_load_inquiry.Order_type_flag,post_load_inquiry.created_date,post_load_inquiry.shippingdatetime,post_load_inquiry.payment_mode,post_load_inquiry.status,
+	                                post_load_inquiry.active_flag,MONTH(post_load_inquiry.shippingdatetime)as shipping_month,YEAR(post_load_inquiry.shippingdatetime)as shipping_year 
+	                                from post_load_inquiry 
+	                                join user_mst on user_mst.unique_id = post_load_inquiry.shipper_id
+	                                where shipper_id !='-9999'  and user_id not in
+	                                ( 'admin' ,'524546471','1112345555','222222222','234678457','506517322','524693690','555429527','555791228','555791229','558643191',
+                                '559776001','566163740','566960082','7226006454','7383607357','7567258257','8320599411','9624008877','9879006454','3333333333'	)
+                                -- and post_load_inquiry.created_date between '2016/10/01' and '2016/11/01' 
+                                )
+                                as temp 
+                                group by Order_type_flag");
             }
             else if (fromdate != null && todate == null)
             {
@@ -3952,15 +3369,15 @@ namespace trukkerUAE.Controllers
                     return BLGeneralUtil.return_ajax_string("0", "Invalid FromDate");
 
                 SQLSelect.Append(@" select Order_type_flag,Count(load_inquiry_no) as ReqCount
-                                        from (
-        	                                select user_mst.first_name,user_mst.user_id,post_load_inquiry.load_inquiry_no,post_load_inquiry.inquiry_source_addr,post_load_inquiry.Total_cost,
-        	                                post_load_inquiry.Order_type_flag,post_load_inquiry.created_date,post_load_inquiry.shippingdatetime,post_load_inquiry.payment_mode,post_load_inquiry.status,
-        	                                post_load_inquiry.active_flag,MONTH(post_load_inquiry.shippingdatetime)as shipping_month,YEAR(post_load_inquiry.shippingdatetime)as shipping_year 
-        	                                from post_load_inquiry 
-        	                                join user_mst on user_mst.unique_id = post_load_inquiry.shipper_id
-        	                                where shipper_id !='-9999'  and user_id not in
-        	                                ( 'admin' ,'524546471','1112345555','222222222','234678457','506517322','524693690','555429527','555791228','555791229','558643191',
-                                        '559776001','566163740','566960082','7226006454','7383607357','7567258257','8320599411','9624008877','9879006454','3333333333'	) ");
+                                from (
+	                                select user_mst.first_name,user_mst.user_id,post_load_inquiry.load_inquiry_no,post_load_inquiry.inquiry_source_addr,post_load_inquiry.Total_cost,
+	                                post_load_inquiry.Order_type_flag,post_load_inquiry.created_date,post_load_inquiry.shippingdatetime,post_load_inquiry.payment_mode,post_load_inquiry.status,
+	                                post_load_inquiry.active_flag,MONTH(post_load_inquiry.shippingdatetime)as shipping_month,YEAR(post_load_inquiry.shippingdatetime)as shipping_year 
+	                                from post_load_inquiry 
+	                                join user_mst on user_mst.unique_id = post_load_inquiry.shipper_id
+	                                where shipper_id !='-9999'  and user_id not in
+	                                ( 'admin' ,'524546471','1112345555','222222222','234678457','506517322','524693690','555429527','555791228','555791229','558643191',
+                                '559776001','566163740','566960082','7226006454','7383607357','7567258257','8320599411','9624008877','9879006454','3333333333'	) ");
                 SQLSelect.Append(" and CONVERT(date,post_load_inquiry.created_date,103)<=CONVERT(date,'" + fromdate + "',103) ");
                 SQLSelect.Append(" ) as temp group by Order_type_flag");
 
@@ -3976,15 +3393,15 @@ namespace trukkerUAE.Controllers
 
 
                 SQLSelect.Append(@" select Order_type_flag,Count(load_inquiry_no) as ReqCount
-                                        from (
-        	                                select user_mst.first_name,user_mst.user_id,post_load_inquiry.load_inquiry_no,post_load_inquiry.inquiry_source_addr,post_load_inquiry.Total_cost,
-        	                                post_load_inquiry.Order_type_flag,post_load_inquiry.created_date,post_load_inquiry.shippingdatetime,post_load_inquiry.payment_mode,post_load_inquiry.status,
-        	                                post_load_inquiry.active_flag,MONTH(post_load_inquiry.shippingdatetime)as shipping_month,YEAR(post_load_inquiry.shippingdatetime)as shipping_year 
-        	                                from post_load_inquiry 
-        	                                join user_mst on user_mst.unique_id = post_load_inquiry.shipper_id
-        	                                where shipper_id !='-9999'  and user_id not in
-        	                                ( 'admin' ,'524546471','1112345555','222222222','234678457','506517322','524693690','555429527','555791228','555791229','558643191',
-                                        '559776001','566163740','566960082','7226006454','7383607357','7567258257','8320599411','9624008877','9879006454','3333333333'	) ");
+                                from (
+	                                select user_mst.first_name,user_mst.user_id,post_load_inquiry.load_inquiry_no,post_load_inquiry.inquiry_source_addr,post_load_inquiry.Total_cost,
+	                                post_load_inquiry.Order_type_flag,post_load_inquiry.created_date,post_load_inquiry.shippingdatetime,post_load_inquiry.payment_mode,post_load_inquiry.status,
+	                                post_load_inquiry.active_flag,MONTH(post_load_inquiry.shippingdatetime)as shipping_month,YEAR(post_load_inquiry.shippingdatetime)as shipping_year 
+	                                from post_load_inquiry 
+	                                join user_mst on user_mst.unique_id = post_load_inquiry.shipper_id
+	                                where shipper_id !='-9999'  and user_id not in
+	                                ( 'admin' ,'524546471','1112345555','222222222','234678457','506517322','524693690','555429527','555791228','555791229','558643191',
+                                '559776001','566163740','566960082','7226006454','7383607357','7567258257','8320599411','9624008877','9879006454','3333333333'	) ");
                 SQLSelect.Append(" and post_load_inquiry.created_date between CONVERT(date,'" + fromdate + "',103) and CONVERT(date,'" + todate + "',103) ");
                 SQLSelect.Append(" ) as temp group by Order_type_flag");
 
@@ -4081,8 +3498,7 @@ namespace trukkerUAE.Controllers
             }
         }
 
-
-        #region Driver Services
+        #region Driver details
 
         [HttpGet]
         public string GetDeviceInfo()
@@ -4142,7 +3558,7 @@ namespace trukkerUAE.Controllers
             else
                 return (BLGeneralUtil.return_ajax_string("0", "Driver Language details not found "));
         }
-
+        
         public string GetQueryDetails(string strquery)
         {
             DataTable dtPostLoadOrders = new DataTable();
@@ -4163,7 +3579,7 @@ namespace trukkerUAE.Controllers
             else
                 return BLGeneralUtil.return_ajax_string("0", "No Data found");
         }
+
         #endregion
     }
 }
-

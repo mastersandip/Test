@@ -108,6 +108,9 @@ namespace trukkerUAE.Classes
 
         public static string PAYFORT_PURCHASE_SUCESS_STATUS = "14";
 
+        public static string ORDER_CANCEL_REQUESTED = "25";
+        public static string ORDER_RESCHEDULE_REQUESTED = "26";
+
         public static string PAINTING_SERIVCES = "PT";
         public static string CLEANING_SERIVCES = "CL";
         public static string PESTCONTROL_SERIVCES = "PEST";
@@ -115,8 +118,5 @@ namespace trukkerUAE.Classes
         public static string SUBSERVICE_PAINTING = "SS0002";
         public static string SUBSERVICE_CLEANING = "SS0003";
         public static string SUBSERVICE_PEST = "SS0006";
-
-        public static string ORDER_CANCEL_REQUESTED = "25";
-        public static string ORDER_RESCHEDULE_REQUESTED = "26";
     }
 }

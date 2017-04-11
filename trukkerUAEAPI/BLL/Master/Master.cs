@@ -1977,6 +1977,7 @@ namespace BLL.Master
                 BLGeneralUtil.UpdateTableInfo objUpdateTableInfo;
 
                 objUpdateTableInfo = BLGeneralUtil.UpdateTable(ref DBCommand, dt_update, BLGeneralUtil.UpdateWhereMode.KeyColumnsOnly, BLGeneralUtil.UpdateMethod.DeleteAndInsert);
+
                 if (objUpdateTableInfo.Status == false || objUpdateTableInfo.TotalRowsAffected != dt_update.Rows.Count)
                 {
                     objBLReturnObject.ExecutionStatus = 2;

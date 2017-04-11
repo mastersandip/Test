@@ -1432,7 +1432,7 @@ namespace TrkrLite.Controllers
             string ratetypeflag = "";
             string shippername = "";
             string UserMobileNo = "";
-
+            DataTable dtaddonservices = null;
             if (dtorder != null)
             {
                 order_type_flag = dtorder.Rows[0]["order_type_flag"].ToString();
@@ -1441,6 +1441,7 @@ namespace TrkrLite.Controllers
                 SizetypeCode = new PostOrderController().GetSizetypeDetails(dtorder.Rows[0]["SizeTypeCode"].ToString());
                 shippername = new PostOrderController().GetUserdetailsByID(dtorder.Rows[0]["shipper_id"].ToString());
                 UserMobileNo = new PostOrderController().GetMobileNoByID(dtorder.Rows[0]["shipper_id"].ToString());
+                dtaddonservices = new PostOrderController().GetorderAddonServiceDetailsByid(LoadInquiryno);
             }
 
             try
@@ -1494,8 +1495,45 @@ namespace TrkrLite.Controllers
                 else
                 {
                     string txttype = order_type_flag == Constant.ORDERTYPECODEFORHOME ? " Size  " : " Truck ";
-                    newmsg.Append("<b> Move Type </b>: " + ordertype + " <br/> <b> " + txttype + " Type </b>: " + SizetypeCode + " <br/>  <b> Package </b>: " + ratetypeflag + " <br/>  <b> Installers/Helpers: </b>: " + dtorder.Rows[0]["NoOfHandiman"].ToString() + "/" + dtorder.Rows[0]["NoOfLabour"].ToString() + " <br/>  <b> Source Address </b>: " + dtorder.Rows[0]["inquiry_source_addr"].ToString() + " <br/> <b> Destination Address </b>: " + dtorder.Rows[0]["inquiry_destination_addr"].ToString() + " <br/>  <b> Total Distance </b>: " + dtorder.Rows[0]["TotalDistance"].ToString() + " " + dtorder.Rows[0]["TotalDistanceUOM"].ToString() + " <br/> <b> UserName </b>: " + shippername + " <br/><b> Email </b>:" + new PostOrderController().GetEmailByID(dtorder.Rows[0]["shipper_id"].ToString()) + " <br/> <b> Mobile Number </b> : " + UserMobileNo + " <br/> <b> Shipping DateTime </b> : " + Convert.ToDateTime(dtorder.Rows[0]["ShippingDatetime"].ToString()).ToString("dd-MM-yyyy HH:mm:ss tt") + "<br/> <b> Order ID  </b> : " + dtorder.Rows[0]["load_inquiry_no"].ToString() + "");
+                    newmsg.Append(" <b> Move Type </b>: " + ordertype + " <br/> <b> " + txttype + " Type </b>: " + SizetypeCode + " <br/>  <b> Package </b>: " + ratetypeflag + " <br/> ");
+                    newmsg.Append(" <b> Installers/Helpers: </b>: " + dtorder.Rows[0]["NoOfHandiman"].ToString() + "/" + dtorder.Rows[0]["NoOfLabour"].ToString() + " <br/> ");
+                    newmsg.Append(" <b> Source Address </b>: " + dtorder.Rows[0]["inquiry_source_addr"].ToString() + " <br/> <b> Destination Address </b>: " + dtorder.Rows[0]["inquiry_destination_addr"].ToString() + " <br/> ");
+                    newmsg.Append(" <b> Total Distance </b>: " + dtorder.Rows[0]["TotalDistance"].ToString() + " " + dtorder.Rows[0]["TotalDistanceUOM"].ToString() + " <br/> <b> UserName </b>: " + shippername + " <br/> ");
+                    newmsg.Append(" <b> Email </b>:" + new PostOrderController().GetEmailByID(dtorder.Rows[0]["shipper_id"].ToString()) + " <br/> <b> Mobile Number </b> : " + UserMobileNo + " <br/> ");
+                    newmsg.Append(" <b> Shipping DateTime </b> : " + Convert.ToDateTime(dtorder.Rows[0]["ShippingDatetime"].ToString()).ToString("dd-MM-yyyy HH:mm:ss tt") + "<br/> ");
+                    newmsg.Append(" <b> Order ID  </b> : " + dtorder.Rows[0]["load_inquiry_no"].ToString() + "");
+
+
+                    string stritem = "";
+                    if (dtorder.Rows[0]["IncludeAddonService"].ToString() == Constant.FLAG_Y)
+                    {
+                        if (dtaddonservices != null)
+                        {
+                            for (int i = 0; i < dtaddonservices.Rows.Count; i++)
+                            {
+                                if (i == 0)
+                                    stritem = "'" + dtaddonservices.Rows[i]["ServiceTypeCode"].ToString() + "'";
+                                else
+                                {
+                                    stritem += ",";
+                                    stritem += "'" + dtaddonservices.Rows[i]["ServiceTypeCode"].ToString() + "'";
+                                }
+                            }
+                        }
+                    }
+                    else
+                        stritem = "";
+
+                    if (dtorder.Rows[0]["IncludeAddonService"].ToString() == Constant.FLAG_Y)
+                    {
+                        stritem = stritem.Replace("'PT'", "Painting");
+                        stritem = stritem.Replace("'CL'", "Cleaning");
+                        stritem = stritem.Replace("'PEST'", "Pest Control");
+                        newmsg.Append("<br/> <b> Addon Service  </b> : " + stritem + "");
+                    }
+
                 }
+
                 if (dt_paramTo != null && dt_paramTo.Rows.Count > 0)
                 {
                     for (int i = 0; i < dt_paramTo.Rows.Count; i++)

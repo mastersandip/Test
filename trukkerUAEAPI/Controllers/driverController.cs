@@ -5158,14 +5158,14 @@ namespace trukkerUAE.Controllers
 
             if (opt == "C")
             {
-                query1 += " select * from truck_current_position join user_mst on  user_mst.unique_id= truck_current_position.device_id Where 1=1  ";
+                query1 += " select * from truck_current_position join user_mst on  user_mst.unique_id= truck_current_position.driver_id Where 1=1  ";
 
                 if (loadinqid != null)
                     query1 += " and truck_current_position.load_inquiry_no=@inqid ";
             }
             else
             {
-                query1 += " select * from truck_current_position_history join user_mst on  user_mst.unique_id= truck_current_position_history.device_id Where 1=1 ";
+                query1 += " select * from truck_current_position_history join user_mst on  user_mst.unique_id= truck_current_position_history.driver_id Where 1=1 ";
                 if (loadinqid != null)
                     query1 += " and truck_current_position_history.load_inquiry_no=@inqid ";
             }

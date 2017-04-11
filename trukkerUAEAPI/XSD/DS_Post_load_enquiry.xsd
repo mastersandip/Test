@@ -15,7 +15,7 @@
   <xs:element name="DS_Post_load_enquiry" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="DS_Post_load_enquiry" msprop:Generator_UserDSName="DS_Post_load_enquiry">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="post_load_temp" msprop:Generator_TableClassName="post_load_tempDataTable" msprop:Generator_TableVarName="tablepost_load_temp" msprop:Generator_TablePropName="post_load_temp" msprop:Generator_RowDeletingName="post_load_tempRowDeleting" msprop:Generator_RowChangingName="post_load_tempRowChanging" msprop:Generator_RowEvHandlerName="post_load_tempRowChangeEventHandler" msprop:Generator_RowDeletedName="post_load_tempRowDeleted" msprop:Generator_UserTableName="post_load_temp" msprop:Generator_RowChangedName="post_load_tempRowChanged" msprop:Generator_RowEvArgName="post_load_tempRowChangeEvent" msprop:Generator_RowClassName="post_load_tempRow">
+        <xs:element name="post_load_temp" msprop:Generator_TableClassName="post_load_tempDataTable" msprop:Generator_TableVarName="tablepost_load_temp" msprop:Generator_RowChangedName="post_load_tempRowChanged" msprop:Generator_TablePropName="post_load_temp" msprop:Generator_RowDeletingName="post_load_tempRowDeleting" msprop:Generator_RowChangingName="post_load_tempRowChanging" msprop:Generator_RowEvHandlerName="post_load_tempRowChangeEventHandler" msprop:Generator_RowDeletedName="post_load_tempRowDeleted" msprop:Generator_RowClassName="post_load_tempRow" msprop:Generator_UserTableName="post_load_temp" msprop:Generator_RowEvArgName="post_load_tempRowChangeEvent">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="shipper_id" msprop:Generator_ColumnVarNameInTable="columnshipper_id" msprop:Generator_ColumnPropNameInRow="shipper_id" msprop:Generator_ColumnPropNameInTable="shipper_idColumn" msprop:Generator_UserColumnName="shipper_id">
@@ -265,7 +265,7 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="post_load_inquiry_temp" msprop:Generator_TableClassName="post_load_inquiry_tempDataTable" msprop:Generator_TableVarName="tablepost_load_inquiry_temp" msprop:Generator_TablePropName="post_load_inquiry_temp" msprop:Generator_RowDeletingName="post_load_inquiry_tempRowDeleting" msprop:Generator_RowChangingName="post_load_inquiry_tempRowChanging" msprop:Generator_RowEvHandlerName="post_load_inquiry_tempRowChangeEventHandler" msprop:Generator_RowDeletedName="post_load_inquiry_tempRowDeleted" msprop:Generator_UserTableName="post_load_inquiry_temp" msprop:Generator_RowChangedName="post_load_inquiry_tempRowChanged" msprop:Generator_RowEvArgName="post_load_inquiry_tempRowChangeEvent" msprop:Generator_RowClassName="post_load_inquiry_tempRow">
+        <xs:element name="post_load_inquiry_temp" msprop:Generator_TableClassName="post_load_inquiry_tempDataTable" msprop:Generator_TableVarName="tablepost_load_inquiry_temp" msprop:Generator_RowChangedName="post_load_inquiry_tempRowChanged" msprop:Generator_TablePropName="post_load_inquiry_temp" msprop:Generator_RowDeletingName="post_load_inquiry_tempRowDeleting" msprop:Generator_RowChangingName="post_load_inquiry_tempRowChanging" msprop:Generator_RowEvHandlerName="post_load_inquiry_tempRowChangeEventHandler" msprop:Generator_RowDeletedName="post_load_inquiry_tempRowDeleted" msprop:Generator_RowClassName="post_load_inquiry_tempRow" msprop:Generator_UserTableName="post_load_inquiry_temp" msprop:Generator_RowEvArgName="post_load_inquiry_tempRowChangeEvent">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="shipper_id" msprop:Generator_ColumnVarNameInTable="columnshipper_id" msprop:Generator_ColumnPropNameInRow="shipper_id" msprop:Generator_ColumnPropNameInTable="shipper_idColumn" msprop:Generator_UserColumnName="shipper_id">
@@ -973,6 +973,7 @@
                 </xs:simpleType>
               </xs:element>
               <xs:element name="Discount" msprop:Generator_ColumnVarNameInTable="columnDiscount" msprop:Generator_ColumnPropNameInRow="Discount" msprop:Generator_ColumnPropNameInTable="DiscountColumn" msprop:Generator_UserColumnName="Discount" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Total_cost_without_addon" msprop:Generator_ColumnVarNameInTable="columnTotal_cost_without_addon" msprop:Generator_ColumnPropNameInRow="Total_cost_without_addon" msprop:Generator_ColumnPropNameInTable="Total_cost_without_addonColumn" msprop:Generator_UserColumnName="Total_cost_without_addon" type="xs:decimal" minOccurs="0" />
               <xs:element name="Total_cost_without_discount" msprop:Generator_ColumnVarNameInTable="columnTotal_cost_without_discount" msprop:Generator_ColumnPropNameInRow="Total_cost_without_discount" msprop:Generator_ColumnPropNameInTable="Total_cost_without_discountColumn" msprop:Generator_UserColumnName="Total_cost_without_discount" type="xs:decimal" minOccurs="0" />
               <xs:element name="rem_amt_to_receive" msprop:Generator_ColumnVarNameInTable="columnrem_amt_to_receive" msprop:Generator_ColumnPropNameInRow="rem_amt_to_receive" msprop:Generator_ColumnPropNameInTable="rem_amt_to_receiveColumn" msprop:Generator_UserColumnName="rem_amt_to_receive" type="xs:decimal" minOccurs="0" />
               <xs:element name="IncludePackingCharge" msprop:Generator_ColumnVarNameInTable="columnIncludePackingCharge" msprop:Generator_ColumnPropNameInRow="IncludePackingCharge" msprop:Generator_ColumnPropNameInTable="IncludePackingChargeColumn" msprop:Generator_UserColumnName="IncludePackingCharge" minOccurs="0">
@@ -1182,18 +1183,6 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Hiretruck_To_datetime" msprop:Generator_ColumnVarNameInTable="columnHiretruck_To_datetime" msprop:Generator_ColumnPropNameInRow="Hiretruck_To_datetime" msprop:Generator_ColumnPropNameInTable="Hiretruck_To_datetimeColumn" msprop:Generator_UserColumnName="Hiretruck_To_datetime" type="xs:dateTime" minOccurs="0" />
-              <xs:element name="Hiretruck_NoofDay" msprop:Generator_ColumnVarNameInTable="columnHiretruck_NoofDay" msprop:Generator_ColumnPropNameInRow="Hiretruck_NoofDay" msprop:Generator_ColumnPropNameInTable="Hiretruck_NoofDayColumn" msprop:Generator_UserColumnName="Hiretruck_NoofDay" type="xs:decimal" minOccurs="0" />
-              <xs:element name="Hiretruck_TotalDayRate" msprop:Generator_ColumnVarNameInTable="columnHiretruck_TotalDayRate" msprop:Generator_ColumnPropNameInRow="Hiretruck_TotalDayRate" msprop:Generator_ColumnPropNameInTable="Hiretruck_TotalDayRateColumn" msprop:Generator_UserColumnName="Hiretruck_TotalDayRate" type="xs:decimal" minOccurs="0" />
-              <xs:element name="Hiretruck_TotalFuelRate" msprop:Generator_ColumnVarNameInTable="columnHiretruck_TotalFuelRate" msprop:Generator_ColumnPropNameInRow="Hiretruck_TotalFuelRate" msprop:Generator_ColumnPropNameInTable="Hiretruck_TotalFuelRateColumn" msprop:Generator_UserColumnName="Hiretruck_TotalFuelRate" type="xs:decimal" minOccurs="0" />
-              <xs:element name="Hiretruck_IncludingFuel" msprop:Generator_ColumnVarNameInTable="columnHiretruck_IncludingFuel" msprop:Generator_ColumnPropNameInRow="Hiretruck_IncludingFuel" msprop:Generator_ColumnPropNameInTable="Hiretruck_IncludingFuelColumn" msprop:Generator_UserColumnName="Hiretruck_IncludingFuel" minOccurs="0">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="1" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
-              <xs:element name="Hiretruck_MaxKM" msprop:Generator_ColumnVarNameInTable="columnHiretruck_MaxKM" msprop:Generator_ColumnPropNameInRow="Hiretruck_MaxKM" msprop:Generator_ColumnPropNameInTable="Hiretruck_MaxKMColumn" msprop:Generator_UserColumnName="Hiretruck_MaxKM" type="xs:decimal" minOccurs="0" />
               <xs:element name="goods_weight" msprop:Generator_ColumnVarNameInTable="columngoods_weight" msprop:Generator_ColumnPropNameInRow="goods_weight" msprop:Generator_ColumnPropNameInTable="goods_weightColumn" msprop:Generator_UserColumnName="goods_weight" type="xs:decimal" minOccurs="0" />
               <xs:element name="goods_weightUOM" msprop:Generator_ColumnVarNameInTable="columngoods_weightUOM" msprop:Generator_ColumnPropNameInRow="goods_weightUOM" msprop:Generator_ColumnPropNameInTable="goods_weightUOMColumn" msprop:Generator_UserColumnName="goods_weightUOM" minOccurs="0">
                 <xs:simpleType>
@@ -1202,6 +1191,18 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
+              <xs:element name="Hiretruck_To_datetime" msprop:Generator_ColumnVarNameInTable="columnHiretruck_To_datetime" msprop:Generator_ColumnPropNameInRow="Hiretruck_To_datetime" msprop:Generator_ColumnPropNameInTable="Hiretruck_To_datetimeColumn" msprop:Generator_UserColumnName="Hiretruck_To_datetime" type="xs:dateTime" minOccurs="0" />
+              <xs:element name="Hiretruck_NoofDay" msprop:Generator_ColumnVarNameInTable="columnHiretruck_NoofDay" msprop:Generator_ColumnPropNameInRow="Hiretruck_NoofDay" msprop:Generator_ColumnPropNameInTable="Hiretruck_NoofDayColumn" msprop:Generator_UserColumnName="Hiretruck_NoofDay" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Hiretruck_TotalDayRate" msprop:Generator_ColumnVarNameInTable="columnHiretruck_TotalDayRate" msprop:Generator_ColumnPropNameInRow="Hiretruck_TotalDayRate" msprop:Generator_ColumnPropNameInTable="Hiretruck_TotalDayRateColumn" msprop:Generator_UserColumnName="Hiretruck_TotalDayRate" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Hiretruck_IncludingFuel" msprop:Generator_ColumnVarNameInTable="columnHiretruck_IncludingFuel" msprop:Generator_ColumnPropNameInRow="Hiretruck_IncludingFuel" msprop:Generator_ColumnPropNameInTable="Hiretruck_IncludingFuelColumn" msprop:Generator_UserColumnName="Hiretruck_IncludingFuel" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="1" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="Hiretruck_TotalFuelRate" msprop:Generator_ColumnVarNameInTable="columnHiretruck_TotalFuelRate" msprop:Generator_ColumnPropNameInRow="Hiretruck_TotalFuelRate" msprop:Generator_ColumnPropNameInTable="Hiretruck_TotalFuelRateColumn" msprop:Generator_UserColumnName="Hiretruck_TotalFuelRate" type="xs:decimal" minOccurs="0" />
+              <xs:element name="Hiretruck_MaxKM" msprop:Generator_ColumnVarNameInTable="columnHiretruck_MaxKM" msprop:Generator_ColumnPropNameInRow="Hiretruck_MaxKM" msprop:Generator_ColumnPropNameInTable="Hiretruck_MaxKMColumn" msprop:Generator_UserColumnName="Hiretruck_MaxKM" type="xs:decimal" minOccurs="0" />
               <xs:element name="AddSerBaseDiscount" msprop:Generator_ColumnVarNameInTable="columnAddSerBaseDiscount" msprop:Generator_ColumnPropNameInRow="AddSerBaseDiscount" msprop:Generator_ColumnPropNameInTable="AddSerBaseDiscountColumn" msprop:Generator_UserColumnName="AddSerBaseDiscount" type="xs:decimal" minOccurs="0" />
               <xs:element name="TotalAddServiceDiscount" msprop:Generator_ColumnVarNameInTable="columnTotalAddServiceDiscount" msprop:Generator_ColumnPropNameInRow="TotalAddServiceDiscount" msprop:Generator_ColumnPropNameInTable="TotalAddServiceDiscountColumn" msprop:Generator_UserColumnName="TotalAddServiceDiscount" type="xs:decimal" minOccurs="0" />
               <xs:element name="TotalAddServiceCharge" msprop:Generator_ColumnVarNameInTable="columnTotalAddServiceCharge" msprop:Generator_ColumnPropNameInRow="TotalAddServiceCharge" msprop:Generator_ColumnPropNameInTable="TotalAddServiceChargeColumn" msprop:Generator_UserColumnName="TotalAddServiceCharge" type="xs:decimal" minOccurs="0" />
@@ -1212,7 +1213,6 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Total_cost_without_addon" msprop:Generator_ColumnVarNameInTable="columnTotal_cost_without_addon" msprop:Generator_ColumnPropNameInRow="Total_cost_without_addon" msprop:Generator_ColumnPropNameInTable="Total_cost_without_addonColumn" msprop:Generator_UserColumnName="Total_cost_without_addon" type="xs:decimal" minOccurs="0" />
             </xs:sequence>
           </xs:complexType>
         </xs:element>

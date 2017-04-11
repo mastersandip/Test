@@ -50,69 +50,6 @@ namespace trukkerUAE.BLL.Master
             }
         }
 
-//        public DataTable GetSizeTypeDetail(String SizeTypeCode, String rate_type_flag, Decimal TotalDistance, String TotalDistanceUOM, ref String Message)
-//        {
-//            try
-//            {
-//                DBDataAdpterObject.SelectCommand.Parameters.Clear();
-//                StringBuilder SQLSelect = new StringBuilder();
-//                SQLSelect.Append(@"SELECT   SizeTypeMatrix.SizeTypeCode, SizeTypeMst.SizeTypeDesc, CAST(NULL AS varchar) AS goods_type_flag, SizeTypeMatrix.rate_type_flag, 0 AS NoOfDay, 
-//                                            TruckTypeMst.truck_type_code, truck_type_desc, NoOfTruck, 0 AS MinDistance, CAST(NULL AS varchar) AS MinDistanceUOM, 0 AS MinDistanceRate, 
-//                                            @TotalDistance AS TotalDistance, DistanceTypeMst.distance_type_code, distance_type_desc, 0 AS RatePerDistanceUOM, RatePerKM, 0 AS TotalTravelingRate, 
-//                                            DriverTypeMst.driver_type_code, driver_type_desc, NoOfDriver, 0 AS RatePerDriver, 0 AS TotalDriverRate, 
-//                                            LabourTypeMst.labour_type_code, labour_type_desc, NoOfLabour, 0 AS RatePerLabour, 0 AS TotalLabourRate,
-//                                            HandimanTypeMst.Handiman_type_code, Handiman_type_desc, NoOfHandiman, 0 AS RatePerHandiman, 0 AS TotalHandimanRate, 
-//                                            SupervisorTypeMst.Supervisor_type_code, Supervisor_type_desc, NoOfSupervisor, 0 AS RatePerSupervisor, 0 AS TotalSupervisorRate, 
-//                                            PackingTypeMst.Packing_type_code, Packing_type_desc, 0 AS TotalPackingRate,                                             
-//                                            TimeForLoadingInMinute, RateForLoading, 0 AS ActualTimeForLoadingInMinute, 0 AS TotalRateForLoading, 
-//                                            TimeForUnloadingInMinute, RateForUnloading, 0 AS ActualTimeForUnloadingInMinute, 0 AS TotalRateForUnLoading, 
-//                                            PerUnitAboveTimeForLoadUnloadMinute, RatePerUnitAboveTimeForLoadUnload, TrukkerMarginStandard, TrukkerMarginPremium, TrukkerMargin, RatePerMinute, 
-//                                            MinRateForMovingGoods,0 AS TimeToTravelInMinute, 0.0 AS TotalRateForTravelInMinute, 0 AS TotalTimeForPostOrder, 
-//                                            CBM_Min, CBM_Max, ManDaysByCBM_Min, ManDaysByCBM_Max, RatePerCBM, 
-//                                            0 AS BaseRate, 0 AS Total_cost, 0 AS Total_cost_IncludeMargin, 0 AS Discount, 0 AS Net_cost,DiffCityTruckAdditionalCharge ,
-//                                            HireTruck_MinRate,HireTruck_FuelRatePerDay,Hiretruck_MaxKM,HireTruck_AdditionalKMCharges,Discount as AddSerBaseDiscount,
-//                                            0 AS Total_PT_Charge,0 AS Total_CL_Charge,0 AS Total_PEST_Charge,0 AS TotalAddServiceDiscount,0 AS TotalAddServiceCharge,
-//                                            0 as AddSerBaseDiscount,0 as Total_PT_Discount,0 as Total_CL_Discount,0 as Total_PEST_Discount                                                 
-//                                           FROM SizeTypeMatrix 
-//                                           INNER JOIN SizeTypeMst ON SizeTypeMatrix.SizeTypeCode = SizeTypeMst.SizeTypeCode 
-//                                           LEFT OUTER JOIN TruckTypeMst ON SizeTypeMatrix.truck_type_code = TruckTypeMst.truck_type_code 
-//                                           LEFT OUTER JOIN DriverTypeMst ON SizeTypeMatrix.driver_type_code = DriverTypeMst.driver_type_code 
-//                                           LEFT OUTER JOIN LabourTypeMst ON SizeTypeMatrix.labour_type_code = LabourTypeMst.labour_type_code 
-//                                           LEFT OUTER JOIN HandimanTypeMst ON SizeTypeMatrix.Handiman_type_code = HandimanTypeMst.Handiman_type_code 
-//                                           LEFT OUTER JOIN SupervisorTypeMst ON SizeTypeMatrix.supervisor_type_code = SupervisorTypeMst.Supervisor_type_code 
-//                                           LEFT OUTER JOIN PackingTypeMst ON SizeTypeMatrix.Packing_type_code = PackingTypeMst.Packing_type_code 
-//                                           CROSS JOIN DistanceTypeMst 
-//                                           WHERE  SizeTypeMatrix.SizeTypeCode = @SizeTypeCode 
-//                                           AND   SizeTypeMatrix.rate_type_flag = @rate_type_flag 
-//                                           AND  DistanceTypeMst.distance_type_code = @distance_type_code ");
-//                DBDataAdpterObject.SelectCommand.CommandText = SQLSelect.ToString();
-//                DBDataAdpterObject.SelectCommand.Parameters.Add(DBObjectFactory.MakeParameter("@SizeTypeCode", DbType.String, SizeTypeCode));
-//                DBDataAdpterObject.SelectCommand.Parameters.Add(DBObjectFactory.MakeParameter("@rate_type_flag", DbType.String, rate_type_flag));
-//                DBDataAdpterObject.SelectCommand.Parameters.Add(DBObjectFactory.MakeParameter("@TotalDistance", DbType.Decimal, TotalDistance));
-//                DBDataAdpterObject.SelectCommand.Parameters.Add(DBObjectFactory.MakeParameter("@distance_type_code", DbType.String, TotalDistanceUOM));
-//                DBDataAdpterObject.TableMappings.Clear();
-//                DBDataAdpterObject.TableMappings.Add("Table", "SizeTypeMst");
-//                DataSet ds = new DataSet();
-//                DBDataAdpterObject.Fill(ds);
-//                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
-//                {
-//                    Message = "SizeType detail data retrieved successfully for SizeTypeCode : " + SizeTypeCode;
-//                    return ds.Tables[0];
-//                }
-//                else
-//                {
-//                    Message = "SizeType detail data is not found for SizeTypeCode : " + SizeTypeCode;
-//                    return null;
-//                }
-//            }
-//            catch (Exception ex)
-//            {
-//                ServerLog.MgmtExceptionLog(ex.Message + Environment.NewLine + ex.StackTrace);
-//                Message = ex.Message;
-//                return null;
-//            }
-//        }
-
         public DataTable GetSizeTypeDetail(String SizeTypeCode, String rate_type_flag, Decimal TotalDistance, String TotalDistanceUOM, ref String Message)
         {
             try
@@ -175,7 +112,6 @@ namespace trukkerUAE.BLL.Master
                 return null;
             }
         }
-
 
         private DataTable GetTruckTypeDistanceMatrix(String SizeTypeCode, ref String Message)
         {
@@ -674,7 +610,7 @@ namespace trukkerUAE.BLL.Master
 
                             if (dtPostOrderParameter != null)
                             {
-                                isCity = dtPostOrderParameter.Select("inquiry_source_city='DUBAI' or inquiry_source_city='SHARJAH' or inquiry_source_city='Mina Jebel Ali'   ").Any();
+                                isCity = dtPostOrderParameter.Select("inquiry_source_city='DUBAI' or inquiry_source_city='SHARJAH' ").Any();
                             }
 
                             if (MinDistanceUOM.ToUpper() != TotalDistanceUOM.ToUpper())
@@ -818,7 +754,8 @@ namespace trukkerUAE.BLL.Master
                         if (TotalAddServiceDiscount > 0)
                         {
                             TotalAddServiceCharge = TotalAddServiceCharge - TotalAddServiceDiscount;
-                        } 
+                        }
+
                         Decimal TotalRate = MinDistanceRate;
                         Decimal TotalRateIncludeMargin = TotalRate + (TotalRate * (TrukkerMarginPremium / 100));
 
@@ -833,7 +770,7 @@ namespace trukkerUAE.BLL.Master
                             TotalRateIncludeMargin = TotalRateIncludeMargin + (DiffCityTruckAdditionalCharge * NoOfTruck.Value);
                         }
 
-                        dtSizeTypeMst.Rows[0]["Total_cost"] = TotalRateIncludeMargin+TotalAddServiceCharge;
+                        dtSizeTypeMst.Rows[0]["Total_cost"] = TotalRateIncludeMargin + TotalAddServiceCharge;
 
                         dtSizeTypeMst.Rows[0]["Total_cost_IncludeMargin"] = TotalRateIncludeMargin;
 
@@ -843,6 +780,8 @@ namespace trukkerUAE.BLL.Master
 
                         int totallaborWithDriver = Convert.ToInt32(dtSizeTypeMst.Rows[0]["NoOfDriver"].ToString()) + Convert.ToInt32(dtSizeTypeMst.Rows[0]["NoOfLabour"].ToString());
                         dtSizeTypeMst.Rows[0]["NoOfLabour"] = totallaborWithDriver;
+
+
 
                         dtSizeTypeMst.Rows[0]["AddSerBaseDiscount"] = AddSerBaseDiscount;
                         dtSizeTypeMst.Rows[0]["Total_PT_Charge"] = TotalPaintingCharge;
@@ -861,7 +800,6 @@ namespace trukkerUAE.BLL.Master
                             dtSizeTypeMst.Columns.Add("Total_cost_without_addon");
                             dtSizeTypeMst.Rows[0]["Total_cost_without_addon"] = TotalRateIncludeMargin;
                         }
-
 
                         return dtSizeTypeMst;
                     }
@@ -894,7 +832,7 @@ namespace trukkerUAE.BLL.Master
                         bool isCity = true;
                         if (dtPostOrderParameter != null)
                         {
-                            isCity = dtPostOrderParameter.Select("inquiry_source_city='DUBAI' or inquiry_source_city='SHARJAH' or inquiry_source_city='Mina Jebel Ali' ").Any();
+                            isCity = dtPostOrderParameter.Select("inquiry_source_city='DUBAI' or inquiry_source_city='SHARJAH' ").Any();
                         }
 
                         //Truck Rate
@@ -1003,7 +941,6 @@ namespace trukkerUAE.BLL.Master
                                             TotalPackingRate = GetPackingRate(Packing_type_code, goods_type_flag, rate_type_flag, OrderDate, ref RatePerSizeTypeCode, ref Message);
                                             if (TotalPackingRate < 0)
                                                 return null;
-
 
                                             Decimal TotalPaintingCharge = 0; Decimal TotalCleaningCharge = 0; Decimal TotalPestControlCharge = 0;
                                             Decimal TotalPaintingDiscount = 0; Decimal TotalCleaningDiscount = 0; Decimal TotalPestControlDiscount = 0;
@@ -1200,7 +1137,6 @@ namespace trukkerUAE.BLL.Master
                                             dtSizeTypeMst.Rows[0]["TotalTravelingRate"] = MinDistanceRate;
                                             dtSizeTypeMst.Rows[0]["TimeToTravelInMinute"] = TimeToTravelInMinute;
                                             dtSizeTypeMst.Rows[0]["TotalTimeForPostOrder"] = TotalTimeForPostOrder;
-                                            
                                             dtSizeTypeMst.Rows[0]["BaseRate"] = BaseRate;
                                             dtSizeTypeMst.Rows[0]["Total_cost"] = Math.Round(TotalRate);
                                             dtSizeTypeMst.Rows[0]["Total_cost_IncludeMargin"] = TotalRateIncludeMargin;
@@ -1620,9 +1556,9 @@ namespace trukkerUAE.BLL.Master
                         dtSizeTypeMst.Rows[0]["NoOfHandiman"] = NoOfHandiman.HasValue ? NoOfHandiman.Value : 0;
 
                         if (Totaltimefortransaction < 240)
-                            RatePerLabour = 80;//100;
+                            RatePerLabour = 100;
                         else
-                            RatePerLabour = 130;//150;
+                            RatePerLabour = 150;
 
 
                         dtSizeTypeMst.Rows[0]["RatePerLabour"] = RatePerLabour;
@@ -1635,9 +1571,9 @@ namespace trukkerUAE.BLL.Master
                         dtSizeTypeMst.Rows[0]["TotalLabourRate"] = TotalLabourRate;
 
                         if (Totaltimefortransaction < 240)
-                            RatePerHandiman = 80;//100;
+                            RatePerHandiman = 100;
                         else
-                            RatePerHandiman = 130;//200;
+                            RatePerHandiman = 200;
 
                         dtSizeTypeMst.Rows[0]["RatePerHandiman"] = RatePerHandiman;
 
@@ -2967,7 +2903,6 @@ namespace trukkerUAE.BLL.Master
             }
         }
 
-
         private Byte UpdateRemainingAmountToReceive_postloadInquiry(ref IDbCommand command, String order_id, String shipper_id, String load_inquiry_no, Decimal adjusted_amt, ref Decimal RemainingAmountToReceive, String created_by, String created_host, String device_id, String device_type, ref String Message)
         {
             try
@@ -3570,6 +3505,7 @@ namespace trukkerUAE.BLL.Master
                 return null;
             }
         }
+
 
     }
 }

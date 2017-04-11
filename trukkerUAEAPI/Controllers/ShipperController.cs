@@ -664,10 +664,10 @@ namespace trukkerUAE.Controllers
 
                         try
                         {
-                            ServerLog.OTPLog("start Verification Code");
+                            ServerLog.OTPLog("start OTP");
                             // send OTP to User Mobile number when user post load
                             new EMail().SendOtpToUserMobileNoUAE(" Thank you for Joining Trukker Your Verification Code to activate user id is : " + Otp.ToString(), tuser[0].user_id);
-                            ServerLog.OTPLog("Verification Code send");
+                            ServerLog.OTPLog("OTP send");
                         }
                         catch (Exception ex)
                         {
@@ -704,7 +704,7 @@ namespace trukkerUAE.Controllers
                     ServerLog.OTPLog("start OTP");
                     // send OTP to User Mobile number when user post load
                     new EMail().SendOtpToUserMobileNoUAE(" Thank you for Joining Trukker Your Verification Code to activate user id is : " + Otp.ToString(), tuser[0].user_id);
-                    ServerLog.OTPLog("Verification Code send");
+                    ServerLog.OTPLog("OTP send");
                 }
                 catch (Exception ex)
                 {
@@ -1434,7 +1434,6 @@ namespace trukkerUAE.Controllers
 
         }
 
-
         public string GetShippingTimeById(string sizetypecode)
         {
             string query = "";
@@ -2100,6 +2099,7 @@ namespace trukkerUAE.Controllers
                     dsOrder.orders.ImportRow(dt_orders.Rows[0]);
                     dsOrder.orders[0].status = Constant.ORDER_RESCHEDULE_REQUESTED;
                     dsOrder.EnforceConstraints = true;
+
                     objBLReturnObject = master.UpdateTables(dsOrder.orders, ref DBCommand);
                     if (objBLReturnObject.ExecutionStatus != 1)
                     {
@@ -2109,13 +2109,9 @@ namespace trukkerUAE.Controllers
                         return BLGeneralUtil.return_ajax_string("0", objBLReturnObject.ServerMessage);
                     }
 
-
-                  
-
                     string MsgMailbody = "";
                     string shippername = new PostOrderController().GetUserdetailsByID(objOrder[0].shipper_id);
                     string shipperEmail = new PostOrderController().GetEmailByID(objOrder[0].shipper_id);
-
 
                     EMail objemail = new EMail();
                     msg = "";
@@ -2129,8 +2125,6 @@ namespace trukkerUAE.Controllers
                         if (DBConnection.State == ConnectionState.Open) DBConnection.Close();
                         return BLGeneralUtil.return_ajax_string("0", msg);
                     }
-
-                    
 
                     string fromemail = dt_param.Rows[0]["param_value"].ToString().Trim();
                     string frompword = dt_param.Rows[0]["Remark"].ToString().Trim();
@@ -2167,7 +2161,10 @@ namespace trukkerUAE.Controllers
                     }
 
                     msg = "";
-                    
+
+                   
+
+
                     return BLGeneralUtil.return_ajax_string("1", " Order reschedule Request Sent ");
                 }
                 catch (Exception ex)

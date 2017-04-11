@@ -2923,6 +2923,8 @@ namespace trukkerUAE.XSD {
             
             private global::System.Data.DataColumn columnDiscount;
             
+            private global::System.Data.DataColumn columnTotal_cost_without_addon;
+            
             private global::System.Data.DataColumn columnTotal_cost_without_discount;
             
             private global::System.Data.DataColumn columnrem_amt_to_receive;
@@ -2993,21 +2995,21 @@ namespace trukkerUAE.XSD {
             
             private global::System.Data.DataColumn columngoods_details;
             
+            private global::System.Data.DataColumn columngoods_weight;
+            
+            private global::System.Data.DataColumn columngoods_weightUOM;
+            
             private global::System.Data.DataColumn columnHiretruck_To_datetime;
             
             private global::System.Data.DataColumn columnHiretruck_NoofDay;
             
             private global::System.Data.DataColumn columnHiretruck_TotalDayRate;
             
-            private global::System.Data.DataColumn columnHiretruck_TotalFuelRate;
-            
             private global::System.Data.DataColumn columnHiretruck_IncludingFuel;
             
+            private global::System.Data.DataColumn columnHiretruck_TotalFuelRate;
+            
             private global::System.Data.DataColumn columnHiretruck_MaxKM;
-            
-            private global::System.Data.DataColumn columngoods_weight;
-            
-            private global::System.Data.DataColumn columngoods_weightUOM;
             
             private global::System.Data.DataColumn columnAddSerBaseDiscount;
             
@@ -3016,8 +3018,6 @@ namespace trukkerUAE.XSD {
             private global::System.Data.DataColumn columnTotalAddServiceCharge;
             
             private global::System.Data.DataColumn columnIncludeAddonService;
-            
-            private global::System.Data.DataColumn columnTotal_cost_without_addon;
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
@@ -3446,6 +3446,14 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Total_cost_without_addonColumn {
+                get {
+                    return this.columnTotal_cost_without_addon;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn Total_cost_without_discountColumn {
                 get {
                     return this.columnTotal_cost_without_discount;
@@ -3726,6 +3734,22 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn goods_weightColumn {
+                get {
+                    return this.columngoods_weight;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn goods_weightUOMColumn {
+                get {
+                    return this.columngoods_weightUOM;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn Hiretruck_To_datetimeColumn {
                 get {
                     return this.columnHiretruck_To_datetime;
@@ -3750,14 +3774,6 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn Hiretruck_TotalFuelRateColumn {
-                get {
-                    return this.columnHiretruck_TotalFuelRate;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn Hiretruck_IncludingFuelColumn {
                 get {
                     return this.columnHiretruck_IncludingFuel;
@@ -3766,25 +3782,17 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public global::System.Data.DataColumn Hiretruck_TotalFuelRateColumn {
+                get {
+                    return this.columnHiretruck_TotalFuelRate;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public global::System.Data.DataColumn Hiretruck_MaxKMColumn {
                 get {
                     return this.columnHiretruck_MaxKM;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn goods_weightColumn {
-                get {
-                    return this.columngoods_weight;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn goods_weightUOMColumn {
-                get {
-                    return this.columngoods_weightUOM;
                 }
             }
             
@@ -3817,14 +3825,6 @@ namespace trukkerUAE.XSD {
             public global::System.Data.DataColumn IncludeAddonServiceColumn {
                 get {
                     return this.columnIncludeAddonService;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public global::System.Data.DataColumn Total_cost_without_addonColumn {
-                get {
-                    return this.columnTotal_cost_without_addon;
                 }
             }
             
@@ -3915,6 +3915,7 @@ namespace trukkerUAE.XSD {
                         decimal Total_cost, 
                         string coupon_code, 
                         decimal Discount, 
+                        decimal Total_cost_without_addon, 
                         decimal Total_cost_without_discount, 
                         decimal rem_amt_to_receive, 
                         string IncludePackingCharge, 
@@ -3950,19 +3951,18 @@ namespace trukkerUAE.XSD {
                         string TotalHandimanRate, 
                         string TotalSupervisorRate, 
                         string goods_details, 
+                        decimal goods_weight, 
+                        string goods_weightUOM, 
                         System.DateTime Hiretruck_To_datetime, 
                         decimal Hiretruck_NoofDay, 
                         decimal Hiretruck_TotalDayRate, 
-                        decimal Hiretruck_TotalFuelRate, 
                         string Hiretruck_IncludingFuel, 
+                        decimal Hiretruck_TotalFuelRate, 
                         decimal Hiretruck_MaxKM, 
-                        decimal goods_weight, 
-                        string goods_weightUOM, 
                         decimal AddSerBaseDiscount, 
                         decimal TotalAddServiceDiscount, 
                         decimal TotalAddServiceCharge, 
-                        string IncludeAddonService, 
-                        decimal Total_cost_without_addon) {
+                        string IncludeAddonService) {
                 post_load_inquiryRow rowpost_load_inquiryRow = ((post_load_inquiryRow)(this.NewRow()));
                 object[] columnValuesArray = new object[] {
                         shipper_id,
@@ -4014,6 +4014,7 @@ namespace trukkerUAE.XSD {
                         Total_cost,
                         coupon_code,
                         Discount,
+                        Total_cost_without_addon,
                         Total_cost_without_discount,
                         rem_amt_to_receive,
                         IncludePackingCharge,
@@ -4049,19 +4050,18 @@ namespace trukkerUAE.XSD {
                         TotalHandimanRate,
                         TotalSupervisorRate,
                         goods_details,
+                        goods_weight,
+                        goods_weightUOM,
                         Hiretruck_To_datetime,
                         Hiretruck_NoofDay,
                         Hiretruck_TotalDayRate,
-                        Hiretruck_TotalFuelRate,
                         Hiretruck_IncludingFuel,
+                        Hiretruck_TotalFuelRate,
                         Hiretruck_MaxKM,
-                        goods_weight,
-                        goods_weightUOM,
                         AddSerBaseDiscount,
                         TotalAddServiceDiscount,
                         TotalAddServiceCharge,
-                        IncludeAddonService,
-                        Total_cost_without_addon};
+                        IncludeAddonService};
                 rowpost_load_inquiryRow.ItemArray = columnValuesArray;
                 this.Rows.Add(rowpost_load_inquiryRow);
                 return rowpost_load_inquiryRow;
@@ -4141,6 +4141,7 @@ namespace trukkerUAE.XSD {
                 this.columnTotal_cost = base.Columns["Total_cost"];
                 this.columncoupon_code = base.Columns["coupon_code"];
                 this.columnDiscount = base.Columns["Discount"];
+                this.columnTotal_cost_without_addon = base.Columns["Total_cost_without_addon"];
                 this.columnTotal_cost_without_discount = base.Columns["Total_cost_without_discount"];
                 this.columnrem_amt_to_receive = base.Columns["rem_amt_to_receive"];
                 this.columnIncludePackingCharge = base.Columns["IncludePackingCharge"];
@@ -4176,19 +4177,18 @@ namespace trukkerUAE.XSD {
                 this.columnTotalHandimanRate = base.Columns["TotalHandimanRate"];
                 this.columnTotalSupervisorRate = base.Columns["TotalSupervisorRate"];
                 this.columngoods_details = base.Columns["goods_details"];
+                this.columngoods_weight = base.Columns["goods_weight"];
+                this.columngoods_weightUOM = base.Columns["goods_weightUOM"];
                 this.columnHiretruck_To_datetime = base.Columns["Hiretruck_To_datetime"];
                 this.columnHiretruck_NoofDay = base.Columns["Hiretruck_NoofDay"];
                 this.columnHiretruck_TotalDayRate = base.Columns["Hiretruck_TotalDayRate"];
-                this.columnHiretruck_TotalFuelRate = base.Columns["Hiretruck_TotalFuelRate"];
                 this.columnHiretruck_IncludingFuel = base.Columns["Hiretruck_IncludingFuel"];
+                this.columnHiretruck_TotalFuelRate = base.Columns["Hiretruck_TotalFuelRate"];
                 this.columnHiretruck_MaxKM = base.Columns["Hiretruck_MaxKM"];
-                this.columngoods_weight = base.Columns["goods_weight"];
-                this.columngoods_weightUOM = base.Columns["goods_weightUOM"];
                 this.columnAddSerBaseDiscount = base.Columns["AddSerBaseDiscount"];
                 this.columnTotalAddServiceDiscount = base.Columns["TotalAddServiceDiscount"];
                 this.columnTotalAddServiceCharge = base.Columns["TotalAddServiceCharge"];
                 this.columnIncludeAddonService = base.Columns["IncludeAddonService"];
-                this.columnTotal_cost_without_addon = base.Columns["Total_cost_without_addon"];
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -4292,6 +4292,8 @@ namespace trukkerUAE.XSD {
                 base.Columns.Add(this.columncoupon_code);
                 this.columnDiscount = new global::System.Data.DataColumn("Discount", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnDiscount);
+                this.columnTotal_cost_without_addon = new global::System.Data.DataColumn("Total_cost_without_addon", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnTotal_cost_without_addon);
                 this.columnTotal_cost_without_discount = new global::System.Data.DataColumn("Total_cost_without_discount", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnTotal_cost_without_discount);
                 this.columnrem_amt_to_receive = new global::System.Data.DataColumn("rem_amt_to_receive", typeof(decimal), null, global::System.Data.MappingType.Element);
@@ -4362,22 +4364,22 @@ namespace trukkerUAE.XSD {
                 base.Columns.Add(this.columnTotalSupervisorRate);
                 this.columngoods_details = new global::System.Data.DataColumn("goods_details", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columngoods_details);
+                this.columngoods_weight = new global::System.Data.DataColumn("goods_weight", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngoods_weight);
+                this.columngoods_weightUOM = new global::System.Data.DataColumn("goods_weightUOM", typeof(string), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columngoods_weightUOM);
                 this.columnHiretruck_To_datetime = new global::System.Data.DataColumn("Hiretruck_To_datetime", typeof(global::System.DateTime), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnHiretruck_To_datetime);
                 this.columnHiretruck_NoofDay = new global::System.Data.DataColumn("Hiretruck_NoofDay", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnHiretruck_NoofDay);
                 this.columnHiretruck_TotalDayRate = new global::System.Data.DataColumn("Hiretruck_TotalDayRate", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnHiretruck_TotalDayRate);
-                this.columnHiretruck_TotalFuelRate = new global::System.Data.DataColumn("Hiretruck_TotalFuelRate", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnHiretruck_TotalFuelRate);
                 this.columnHiretruck_IncludingFuel = new global::System.Data.DataColumn("Hiretruck_IncludingFuel", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnHiretruck_IncludingFuel);
+                this.columnHiretruck_TotalFuelRate = new global::System.Data.DataColumn("Hiretruck_TotalFuelRate", typeof(decimal), null, global::System.Data.MappingType.Element);
+                base.Columns.Add(this.columnHiretruck_TotalFuelRate);
                 this.columnHiretruck_MaxKM = new global::System.Data.DataColumn("Hiretruck_MaxKM", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnHiretruck_MaxKM);
-                this.columngoods_weight = new global::System.Data.DataColumn("goods_weight", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columngoods_weight);
-                this.columngoods_weightUOM = new global::System.Data.DataColumn("goods_weightUOM", typeof(string), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columngoods_weightUOM);
                 this.columnAddSerBaseDiscount = new global::System.Data.DataColumn("AddSerBaseDiscount", typeof(decimal), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnAddSerBaseDiscount);
                 this.columnTotalAddServiceDiscount = new global::System.Data.DataColumn("TotalAddServiceDiscount", typeof(decimal), null, global::System.Data.MappingType.Element);
@@ -4386,8 +4388,6 @@ namespace trukkerUAE.XSD {
                 base.Columns.Add(this.columnTotalAddServiceCharge);
                 this.columnIncludeAddonService = new global::System.Data.DataColumn("IncludeAddonService", typeof(string), null, global::System.Data.MappingType.Element);
                 base.Columns.Add(this.columnIncludeAddonService);
-                this.columnTotal_cost_without_addon = new global::System.Data.DataColumn("Total_cost_without_addon", typeof(decimal), null, global::System.Data.MappingType.Element);
-                base.Columns.Add(this.columnTotal_cost_without_addon);
                 this.Constraints.Add(new global::System.Data.UniqueConstraint("Constraint1", new global::System.Data.DataColumn[] {
                                 this.columnshipper_id,
                                 this.columnload_inquiry_no}, true));
@@ -4456,8 +4456,8 @@ namespace trukkerUAE.XSD {
                 this.columnTotalHandimanRate.MaxLength = 50;
                 this.columnTotalSupervisorRate.MaxLength = 50;
                 this.columngoods_details.MaxLength = 2147483647;
-                this.columnHiretruck_IncludingFuel.MaxLength = 1;
                 this.columngoods_weightUOM.MaxLength = 100;
+                this.columnHiretruck_IncludingFuel.MaxLength = 1;
                 this.columnIncludeAddonService.MaxLength = 1;
             }
             
@@ -8960,6 +8960,23 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal Total_cost_without_addon {
+                get {
+                    try {
+                        return ((decimal)(this[this.tablepost_load_inquiry.Total_cost_without_addonColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Total_cost_without_addon\' in table \'post_load_inquiry\' is D" +
+                                "BNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablepost_load_inquiry.Total_cost_without_addonColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public decimal Total_cost_without_discount {
                 get {
                     try {
@@ -9529,6 +9546,38 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal goods_weight {
+                get {
+                    try {
+                        return ((decimal)(this[this.tablepost_load_inquiry.goods_weightColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'goods_weight\' in table \'post_load_inquiry\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablepost_load_inquiry.goods_weightColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public string goods_weightUOM {
+                get {
+                    try {
+                        return ((string)(this[this.tablepost_load_inquiry.goods_weightUOMColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'goods_weightUOM\' in table \'post_load_inquiry\' is DBNull.", e);
+                    }
+                }
+                set {
+                    this[this.tablepost_load_inquiry.goods_weightUOMColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public System.DateTime Hiretruck_To_datetime {
                 get {
                     try {
@@ -9579,23 +9628,6 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public decimal Hiretruck_TotalFuelRate {
-                get {
-                    try {
-                        return ((decimal)(this[this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Hiretruck_TotalFuelRate\' in table \'post_load_inquiry\' is DB" +
-                                "Null.", e);
-                    }
-                }
-                set {
-                    this[this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public string Hiretruck_IncludingFuel {
                 get {
                     try {
@@ -9613,6 +9645,23 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public decimal Hiretruck_TotalFuelRate {
+                get {
+                    try {
+                        return ((decimal)(this[this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn]));
+                    }
+                    catch (global::System.InvalidCastException e) {
+                        throw new global::System.Data.StrongTypingException("The value for column \'Hiretruck_TotalFuelRate\' in table \'post_load_inquiry\' is DB" +
+                                "Null.", e);
+                    }
+                }
+                set {
+                    this[this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn] = value;
+                }
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public decimal Hiretruck_MaxKM {
                 get {
                     try {
@@ -9624,38 +9673,6 @@ namespace trukkerUAE.XSD {
                 }
                 set {
                     this[this.tablepost_load_inquiry.Hiretruck_MaxKMColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public decimal goods_weight {
-                get {
-                    try {
-                        return ((decimal)(this[this.tablepost_load_inquiry.goods_weightColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'goods_weight\' in table \'post_load_inquiry\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablepost_load_inquiry.goods_weightColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public string goods_weightUOM {
-                get {
-                    try {
-                        return ((string)(this[this.tablepost_load_inquiry.goods_weightUOMColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'goods_weightUOM\' in table \'post_load_inquiry\' is DBNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablepost_load_inquiry.goods_weightUOMColumn] = value;
                 }
             }
             
@@ -9724,23 +9741,6 @@ namespace trukkerUAE.XSD {
                 }
                 set {
                     this[this.tablepost_load_inquiry.IncludeAddonServiceColumn] = value;
-                }
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public decimal Total_cost_without_addon {
-                get {
-                    try {
-                        return ((decimal)(this[this.tablepost_load_inquiry.Total_cost_without_addonColumn]));
-                    }
-                    catch (global::System.InvalidCastException e) {
-                        throw new global::System.Data.StrongTypingException("The value for column \'Total_cost_without_addon\' in table \'post_load_inquiry\' is D" +
-                                "BNull.", e);
-                    }
-                }
-                set {
-                    this[this.tablepost_load_inquiry.Total_cost_without_addonColumn] = value;
                 }
             }
             
@@ -10310,6 +10310,18 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsTotal_cost_without_addonNull() {
+                return this.IsNull(this.tablepost_load_inquiry.Total_cost_without_addonColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetTotal_cost_without_addonNull() {
+                this[this.tablepost_load_inquiry.Total_cost_without_addonColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsTotal_cost_without_discountNull() {
                 return this.IsNull(this.tablepost_load_inquiry.Total_cost_without_discountColumn);
             }
@@ -10730,6 +10742,30 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isgoods_weightNull() {
+                return this.IsNull(this.tablepost_load_inquiry.goods_weightColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setgoods_weightNull() {
+                this[this.tablepost_load_inquiry.goods_weightColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool Isgoods_weightUOMNull() {
+                return this.IsNull(this.tablepost_load_inquiry.goods_weightUOMColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void Setgoods_weightUOMNull() {
+                this[this.tablepost_load_inquiry.goods_weightUOMColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsHiretruck_To_datetimeNull() {
                 return this.IsNull(this.tablepost_load_inquiry.Hiretruck_To_datetimeColumn);
             }
@@ -10766,18 +10802,6 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsHiretruck_TotalFuelRateNull() {
-                return this.IsNull(this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetHiretruck_TotalFuelRateNull() {
-                this[this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsHiretruck_IncludingFuelNull() {
                 return this.IsNull(this.tablepost_load_inquiry.Hiretruck_IncludingFuelColumn);
             }
@@ -10790,6 +10814,18 @@ namespace trukkerUAE.XSD {
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public bool IsHiretruck_TotalFuelRateNull() {
+                return this.IsNull(this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn);
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
+            public void SetHiretruck_TotalFuelRateNull() {
+                this[this.tablepost_load_inquiry.Hiretruck_TotalFuelRateColumn] = global::System.Convert.DBNull;
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public bool IsHiretruck_MaxKMNull() {
                 return this.IsNull(this.tablepost_load_inquiry.Hiretruck_MaxKMColumn);
             }
@@ -10798,30 +10834,6 @@ namespace trukkerUAE.XSD {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetHiretruck_MaxKMNull() {
                 this[this.tablepost_load_inquiry.Hiretruck_MaxKMColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool Isgoods_weightNull() {
-                return this.IsNull(this.tablepost_load_inquiry.goods_weightColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void Setgoods_weightNull() {
-                this[this.tablepost_load_inquiry.goods_weightColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool Isgoods_weightUOMNull() {
-                return this.IsNull(this.tablepost_load_inquiry.goods_weightUOMColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void Setgoods_weightUOMNull() {
-                this[this.tablepost_load_inquiry.goods_weightUOMColumn] = global::System.Convert.DBNull;
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -10870,18 +10882,6 @@ namespace trukkerUAE.XSD {
             [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
             public void SetIncludeAddonServiceNull() {
                 this[this.tablepost_load_inquiry.IncludeAddonServiceColumn] = global::System.Convert.DBNull;
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public bool IsTotal_cost_without_addonNull() {
-                return this.IsNull(this.tablepost_load_inquiry.Total_cost_without_addonColumn);
-            }
-            
-            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-            [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "4.0.0.0")]
-            public void SetTotal_cost_without_addonNull() {
-                this[this.tablepost_load_inquiry.Total_cost_without_addonColumn] = global::System.Convert.DBNull;
             }
         }
         

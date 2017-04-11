@@ -244,13 +244,13 @@ namespace BLL.Utilities
                         if (status == "SUCCESS")
                         {
                             ServerLog.OTPLog("OTP Message Send Sucessfully - " + phoneNo);
-                            return BLGeneralUtil.return_ajax_string("1", "OTP Message Send Sucessfully");
+                            return BLGeneralUtil.return_ajax_string("1", "Verification Code Message Send Sucessfully");
 
                         }
                         else
                         {
                             ServerLog.OTPLog("OTP Message Not Send - " + phoneNo);
-                            return BLGeneralUtil.return_ajax_string("0", "OTP Not Send");
+                            return BLGeneralUtil.return_ajax_string("0", "Verification Code Not Send");
                         }
                     }
 
@@ -295,13 +295,13 @@ namespace BLL.Utilities
                         if (xnode[0].InnerText == "0")
                         {
                             ServerLog.OTPLog("OTP Message Send Sucessfully - " + phoneNo);
-                            return BLGeneralUtil.return_ajax_string("1", "OTP Message Send Sucessfully");
+                            return BLGeneralUtil.return_ajax_string("1", "Verification Code Message Send Sucessfully");
 
                         }
                         else
                         {
                             ServerLog.OTPLog("OTP Message Send Sucessfully - " + phoneNo);
-                            return BLGeneralUtil.return_ajax_string("0", "OTP Not Send");
+                            return BLGeneralUtil.return_ajax_string("0", "Verification Code Not Send");
                         }
                     }
 
@@ -331,117 +331,6 @@ namespace BLL.Utilities
         // <img src="https://ci4.googleusercontent.com/proxy/kjCXciKZdB8ljOeqxrCO60KuMMiTrPb46T_pt7v-FbxsyAoeapdBvqyc2ZkmYJF9v2SNFzMBeWp7yzCKEiCoaa15V8xVC1NMej6MIYyEOUUmMv3pKnMvgnNfzaydpiuAYJGf9dW092qADT48iW0Qb72uSeJBhwFZSGo6erY=s0-d-e1-ft#https://gallery.mailchimp.com/5a05ca263fac7c79a5efb199d/images/0801597e-3da9-49d1-bd4c-b236dc4b12b5.png" style="width: 20px; min-height: 20px; margin: 0px; border: 0; outline: none; text-decoration: none" valign="middle" class="CToWUd" width="20" align="none" height="20">&nbsp; Start Time &nbsp;: &nbsp;</span></strong><span style="color: #000000"><span class="aBn" data-term="goog_216788853" tabindex="0"><span class="aQJ">10:00 am</span></span></span></span></td>
         // <td style="text-align: left"><span style="font-size: 13px"><strong><span style="color: #000000">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<img src="https://ci4.googleusercontent.com/proxy/kjCXciKZdB8ljOeqxrCO60KuMMiTrPb46T_pt7v-FbxsyAoeapdBvqyc2ZkmYJF9v2SNFzMBeWp7yzCKEiCoaa15V8xVC1NMej6MIYyEOUUmMv3pKnMvgnNfzaydpiuAYJGf9dW092qADT48iW0Qb72uSeJBhwFZSGo6erY=s0-d-e1-ft#https://gallery.mailchimp.com/5a05ca263fac7c79a5efb199d/images/0801597e-3da9-49d1-bd4c-b236dc4b12b5.png" style="width: 20px; min-height: 20px; margin: 0px; border: 0; outline: none; text-decoration: none" valign="middle" class="CToWUd" width="20" align="none" height="20">&nbsp; &nbsp;End Time &nbsp;: &nbsp;</span></strong><span style="color: #000000">10::00 pm</span></span></td>
         // </tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table>
-
-        //[HttpGet]
-        //public string GenerateOrderGenerationMail(string mailto, string title, string UserName, string message, string OrderID, DataTable dtorder, string Packingrate)
-        //{
-        //    string domian = ConfigurationManager.AppSettings["Domain"];
-        //    StreamReader sr; string LINK = "";
-        //    if (dtorder.Rows[0]["order_type_flag"].ToString() == "H")
-        //        sr = new StreamReader(HttpContext.Current.Request.PhysicalApplicationPath + "\\Mailers\\TrukkerUAE_OrderConfirmationMail.html");
-        //    else
-        //        sr = new StreamReader(HttpContext.Current.Request.PhysicalApplicationPath + "\\Mailers\\TrukkerUAE_OrderConfirmationMailGoods.html");
-
-        //    string strdata = ""; string msg = "";
-        //    string TITLE = title;
-        //    string addonloadinquiry = BLGeneralUtil.Encrypt(dtorder.Rows[0]["load_inquiry_no"].ToString());
-
-        //    while (!sr.EndOfStream)
-        //    {
-        //        double totalprice = Convert.ToDouble(dtorder.Rows[0]["Total_cost"].ToString());
-        //        int totallaborWithDriver = Convert.ToInt32(dtorder.Rows[0]["NoOfLabour"].ToString());
-
-        //        strdata = sr.ReadToEnd();
-        //        strdata = strdata.Replace("IMAGE1", ConfigurationManager.AppSettings["Domain"] + "MailerImage/OrderConfirmationHeader.jpg");
-        //        strdata = strdata.Replace("IMAGE2", ConfigurationManager.AppSettings["Domain"] + "MailerImage/Bottom.jpg");
-        //        strdata = strdata.Replace("USERNAME", UserName);
-        //        strdata = strdata.Replace("ORDERID", dtorder.Rows[0]["load_inquiry_no"].ToString());
-        //        strdata = strdata.Replace("SHIPPINGDATETIME", Convert.ToDateTime(dtorder.Rows[0]["shippingdatetime"].ToString()).ToString("dd MMM yyyy hh:mm tt"));
-        //        strdata = strdata.Replace("SOURCE_ADDRESS", dtorder.Rows[0]["inquiry_source_addr"].ToString());
-        //        strdata = strdata.Replace("DESTINATION_ADDRESS", dtorder.Rows[0]["inquiry_destination_addr"].ToString());
-        //        strdata = strdata.Replace("NOOFTRUCK", dtorder.Rows[0]["NoOfTruck"].ToString());
-        //        strdata = strdata.Replace("NOOFHANDIMAN", dtorder.Rows[0]["NoOfHandiman"].ToString());
-        //        strdata = strdata.Replace("NOOFLABOUR", totallaborWithDriver.ToString());
-        //        strdata = strdata.Replace("TOTALCOST", totalprice.ToString());
-        //        strdata = strdata.Replace("TRACKURL", dtorder.Rows[0]["trackurl"].ToString());
-        //        strdata = strdata.Replace("CBMLINK", dtorder.Rows[0]["cbmlink"].ToString());
-        //        strdata = strdata.Replace("SOURCELAT", dtorder.Rows[0]["inquiry_source_lat"].ToString());
-        //        strdata = strdata.Replace("SOURCELONGS", dtorder.Rows[0]["inquiry_source_lng"].ToString());
-        //        strdata = strdata.Replace("DESTLAT", dtorder.Rows[0]["inquiry_destionation_lat"].ToString());
-        //        strdata = strdata.Replace("DESTILONGS", dtorder.Rows[0]["inquiry_destionation_lng"].ToString());
-        //        // strdata = strdata.Replace("LATLONGS", dtorder.Rows[0]["inquiry_source_lat"].ToString() + "," + dtorder.Rows[0]["inquiry_source_lng"].ToString() + "|" + dtorder.Rows[0]["inquiry_destionation_lat"].ToString() + "," + dtorder.Rows[0]["inquiry_destionation_lng"].ToString());
-        //        if (dtorder.Rows[0]["order_type_flag"].ToString() == "H")
-        //            strdata = strdata.Replace("MOVINGTYPE", "Home");
-        //        else
-        //            strdata = strdata.Replace("MOVINGTYPE", "Goods");
-
-        //        if (dtorder.Rows[0]["IncludePackingCharge"].ToString() == "Y")
-        //            strdata = strdata.Replace("PACKINGCHARGE", "(Include packaging charge AED " + Math.Round(Convert.ToDecimal(Packingrate)) + " )");
-        //        else
-        //            strdata = strdata.Replace("PACKINGCHARGE", "");
-        //        strdata = strdata.Replace("ADDONLINK", addonloadinquiry);
-
-        //        string SOURCELAT = dtorder.Rows[0]["inquiry_source_lat"].ToString();
-        //        string SOURCELONGS = dtorder.Rows[0]["inquiry_source_lng"].ToString();
-        //        string DESTLAT = dtorder.Rows[0]["inquiry_destionation_lat"].ToString();
-        //        string DESTILONGS = dtorder.Rows[0]["inquiry_destionation_lng"].ToString();
-
-        //        //string str = "";
-        //        //str = "<script type=\"text/javascript\"> " +
-        //        //      " initMap();" +
-        //        //      "  function initMap() {" +
-        //        //      "  var latlng = new google.maps.LatLng(23.0158, 72.5045);" +
-        //        //      "  var directionsService = new google.maps.DirectionsService;" +
-        //        //      "  //var directionsDisplay = new google.maps.DirectionsRenderer;" +
-        //        //      "  var directionsDisplay = new google.maps.DirectionsRenderer({ suppressMarkers: true });" +
-        //        //      "  // var bounds = new google.maps.LatLngBounds();" +
-        //        //      "  var map = new google.maps.Map(document.getElementById('dvMap_current'), {" +
-        //        //      "      zoom: 17," +
-        //        //      "      center: latlng," +
-        //        //      "      scrollwheel: false," +
-        //        //      "      navigationControl: false," +
-        //        //      "      mapTypeControl: false," +
-        //        //      "      scaleControl: false," +
-        //        //      "      draggable: false," +
-        //        //      "      panControl: false," +
-        //        //      "      zoomControl: false," +
-        //        //      "      disableDoubleClickZoom: true," +
-        //        //      "      streetViewControl: false," +
-        //        //      "      mapTypeId: google.maps.MapTypeId.ROADMAP" +
-        //        //      "  });" +
-        //        //      "  directionsDisplay.setMap(map);" +
-        //        //      "  calculateAndDisplayRoute(directionsService, directionsDisplay);" +
-        //        //       " }" +
-        //        //   "     function calculateAndDisplayRoute(directionsService, directionsDisplay) {" +
-        //        //   "        directionsService.route({" +
-        //        //   "            origin: new google.maps.LatLng(23.0158, 72.5045), " +
-        //        //   "   destination: new google.maps.LatLng(23.002272,  72.502243), " +
-        //        //    //"            origin: new google.maps.LatLng(" + SOURCELAT + "," + SOURCELONGS + ")," +
-        //        //    //"            destination: new google.maps.LatLng(" + DESTLAT + "," + DESTILONGS + ")," +
-        //        //   "            travelMode: 'DRIVING'" +
-        //        //   "        }, function (response, status) {" +
-        //        //   "            if (status === 'OK') {" +
-        //        //   "                directionsDisplay.setDirections(response);" +
-        //        //   "            } else {" +
-        //        //   "                window.alert('Directions request failed due to ' + status);" +
-        //        //   "            }" +
-        //        //   "        });" +
-        //        //   "    }" +
-        //        //   " </script>";
-
-        //        //strdata = strdata.Replace("JQUERY", str);
-        //    }
-
-        //    sr.Close();
-        //    msg = "";
-        //    EMail objemail = new EMail();
-        //    Boolean bl = objemail.SendMail(mailto, strdata, TITLE, ref msg, "CONTACT", "SENDFROM");
-        //    if (!bl)
-        //    {
-        //        return BLGeneralUtil.return_ajax_string("0", msg);
-        //    }
-        //    return BLGeneralUtil.return_ajax_string("1", "Registration Email Sent Successfully");
-        //}
 
         [HttpGet]
         public string GenerateOrderGenerationMail(string mailto, string title, string UserName, string message, string OrderID, DataTable dtorder, string Packingrate)
@@ -587,7 +476,6 @@ namespace BLL.Utilities
             }
             return BLGeneralUtil.return_ajax_string("1", "Registration Email Sent Successfully");
         }
-
 
         [HttpGet]
         public string GenerateOrderCompletationMail(string mailto, string title, string UserName, string message, string OrderID)
